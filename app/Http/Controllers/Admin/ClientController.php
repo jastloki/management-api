@@ -29,6 +29,9 @@ class ClientController extends Controller
             "updateStatus",
             "bulkUpdateStatus",
         );
+        $this->middleware("permission:clients.edit")->only("bulkAssign");
+        $this->middleware("permission:clients.delete")->only("bulkDelete");
+        $this->middleware("permission:clients.edit")->only("bulkMakeClient");
     }
 
     /**
@@ -41,6 +44,19 @@ class ClientController extends Controller
         // Filter by status
         if ($request->filled("status_id")) {
             $query->where("status_id", $request->status_id);
+        }
+
+        if ($request->has("converted")) {
+            // Check permission for viewing leads
+            if (
+                $request->converted === "false" &&
+                !auth()->user()->can("clients.view.leads")
+            ) {
+                abort(403, "You don't have permission to view leads.");
+            }
+            $query->where("converted", $request->converted === "true");
+        } else {
+            $query->where("converted", true);
         }
 
         // Filter by user
@@ -65,7 +81,11 @@ class ClientController extends Controller
             $query->where("user_id", "=", auth()->user()->id);
         }
 
-        $clients = $query->latest()->paginate(20)->appends($request->query());
+        $clients = $query
+            ->latest()
+            ->orderBy("updated_at", "desc")
+            ->paginate($request->limit ?? 50)
+            ->appends($request->query());
 
         // Get filter options
         $statuses = Status::orderBy("name")->get();
@@ -82,6 +102,14 @@ class ClientController extends Controller
      */
     public function create()
     {
+        // Check permission for creating leads
+        if (
+            request("converted") === "false" &&
+            !auth()->user()->can("clients.view.leads")
+        ) {
+            abort(403, "You don't have permission to create leads.");
+        }
+
         $statuses = Status::orderBy("name")->get();
         $users = User::orderBy("name")->get();
         return view("admin.clients.create", compact("statuses", "users"));
@@ -101,13 +129,20 @@ class ClientController extends Controller
             "status_id" => "required|exists:statuses,id",
             "user_id" => "required|exists:users,id",
             "is_email_valid" => "required|boolean",
+            "converted" => "nullable|string|in:true,false",
         ]);
+
+        $validated["converted"] = $validated["converted"] === "true";
 
         Client::create($validated);
 
+        $type = $validated["converted"] ? "Client" : "Lead";
+
         return redirect()
-            ->route("admin.clients.index")
-            ->with("success", "Client created successfully.");
+            ->route("admin.clients.index", [
+                "converted" => $request->input("converted", "true"),
+            ])
+            ->with("success", "{$type} created successfully.");
     }
 
     /**
@@ -146,13 +181,22 @@ class ClientController extends Controller
             "status_id" => "required|exists:statuses,id",
             "user_id" => "required|exists:users,id",
             "is_email_valid" => "required|boolean",
+            "converted" => "nullable|string|in:true,false",
         ]);
+
+        if (isset($validated["converted"])) {
+            $validated["converted"] = $validated["converted"] === "true";
+        }
 
         $client->update($validated);
 
+        $type = $client->converted ? "Client" : "Lead";
+
         return redirect()
-            ->route("admin.clients.index")
-            ->with("success", "Client updated successfully.");
+            ->route("admin.clients.index", [
+                "converted" => $client->converted ? "true" : "false",
+            ])
+            ->with("success", "{$type} updated successfully.");
     }
 
     /**
@@ -224,11 +268,16 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
+        $converted = $client->converted;
+        $type = $converted ? "Client" : "Lead";
+
         $client->delete();
 
         return redirect()
-            ->route("admin.clients.index")
-            ->with("success", "Client deleted successfully.");
+            ->route("admin.clients.index", [
+                "converted" => $converted ? "true" : "false",
+            ])
+            ->with("success", "{$type} deleted successfully.");
     }
 
     /**
@@ -236,6 +285,14 @@ class ClientController extends Controller
      */
     public function showImport()
     {
+        // Check permission for importing leads
+        if (
+            request("converted") === "false" &&
+            !auth()->user()->can("clients.view.leads")
+        ) {
+            abort(403, "You don't have permission to import leads.");
+        }
+
         return view("admin.clients.import");
     }
 
@@ -246,13 +303,17 @@ class ClientController extends Controller
     {
         $request->validate([
             "file" => "required|mimes:xlsx,xls,csv|max:2048",
+            "converted" => "nullable|string|in:true,false",
         ]);
 
         try {
             $clientCountBefore = Client::count();
             $file = $request->file("file");
-            $import = new ClientsImport($file->getClientOriginalName());
-            Excel::import($import, $request->file("file"));
+            $import = new ClientsImport(
+                $file->getClientOriginalName(),
+                $request->input("converted", "true") === "true",
+            );
+            Excel::queueImport($import, $request->file("file"));
 
             $clientCountAfter = Client::count();
             $successCount = $clientCountAfter - $clientCountBefore;
@@ -273,7 +334,9 @@ class ClientController extends Controller
 
             if ($errorCount > 0) {
                 return redirect()
-                    ->route("admin.clients.index")
+                    ->route("admin.clients.index", [
+                        "converted" => $request->input("converted", "true"),
+                    ])
                     ->with(
                         "warning",
                         "Import completed with some issues. Successfully imported: {$successCount}, Failed: {$errorCount}",
@@ -283,22 +346,30 @@ class ClientController extends Controller
 
             if ($successCount === 0) {
                 return redirect()
-                    ->route("admin.clients.index")
+                    ->route("admin.clients.index", [
+                        "converted" => $request->input("converted", "true"),
+                    ])
                     ->with(
                         "warning",
                         "No new clients were imported. Please check your file format.",
                     );
             }
 
+            $type =
+                $request->input("converted") === "false" ? "leads" : "clients";
             return redirect()
-                ->route("admin.clients.index")
+                ->route("admin.clients.index", [
+                    "converted" => $request->input("converted", "true"),
+                ])
                 ->with(
                     "success",
-                    "Successfully imported {$successCount} clients.",
+                    "Successfully imported {$successCount} {$type} from {$file->getClientOriginalName()}",
                 );
         } catch (\Exception $e) {
             return redirect()
-                ->route("admin.clients.index")
+                ->route("admin.clients.index", [
+                    "converted" => $request->input("converted", "true"),
+                ])
                 ->with("error", "Import failed: " . $e->getMessage());
         }
     }
@@ -417,6 +488,122 @@ class ClientController extends Controller
                     "error",
                     "Failed to start email validation. Please try again.",
                 );
+        }
+    }
+
+    /**
+     * Bulk assign clients to a user.
+     */
+    public function bulkAssign(Request $request)
+    {
+        $validated = $request->validate([
+            "client_ids" => "required|string",
+            "user_id" => "required|exists:users,id",
+        ]);
+
+        try {
+            $clientIds = json_decode($validated["client_ids"], true);
+
+            if (!is_array($clientIds)) {
+                return redirect()
+                    ->back()
+                    ->with("error", "Invalid client selection.");
+            }
+
+            $updatedCount = Client::whereIn("id", $clientIds)->update([
+                "user_id" => $validated["user_id"],
+            ]);
+
+            return redirect()
+                ->back()
+                ->with(
+                    "success",
+                    "Assigned {$updatedCount} clients to user successfully.",
+                );
+        } catch (\Exception $e) {
+            Log::error("Failed to bulk assign clients", [
+                "error" => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with("error", "Failed to assign clients. Please try again.");
+        }
+    }
+
+    /**
+     * Bulk delete clients.
+     */
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            "client_ids" => "required|string",
+        ]);
+
+        try {
+            $clientIds = json_decode($validated["client_ids"], true);
+
+            if (!is_array($clientIds)) {
+                return redirect()
+                    ->back()
+                    ->with("error", "Invalid client selection.");
+            }
+
+            $deletedCount = Client::whereIn("id", $clientIds)->delete();
+
+            return redirect()
+                ->back()
+                ->with(
+                    "success",
+                    "Deleted {$deletedCount} clients successfully.",
+                );
+        } catch (\Exception $e) {
+            Log::error("Failed to bulk delete clients", [
+                "error" => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with("error", "Failed to delete clients. Please try again.");
+        }
+    }
+
+    /**
+     * Bulk make client - sets converted to true for selected clients.
+     */
+    public function bulkMakeClient(Request $request)
+    {
+        $validated = $request->validate([
+            "client_ids" => "required|string",
+        ]);
+
+        try {
+            $clientIds = json_decode($validated["client_ids"], true);
+
+            if (!is_array($clientIds)) {
+                return redirect()
+                    ->back()
+                    ->with("error", "Invalid client selection.");
+            }
+
+            $updatedCount = Client::whereIn("id", $clientIds)->update([
+                "converted" => true,
+            ]);
+
+            return redirect()
+                ->back()
+                ->with(
+                    "success",
+                    "Successfully marked {$updatedCount} clients as converted.",
+                );
+        } catch (\Exception $e) {
+            Log::error("Failed to bulk update clients", [
+                "error" => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with("error", "Failed to update clients. Please try again.");
         }
     }
 }

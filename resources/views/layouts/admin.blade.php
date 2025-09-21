@@ -332,10 +332,18 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"
-                   href="{{ route('admin.clients.index') }}">
+                <a class="nav-link {{ request()->routeIs('admin.clients.*') && request('converted') !== 'false' ? 'active' : '' }}"
+                   href="{{ route('admin.clients.index', ['converted' => 'true']) }}">
                     <i class="fas fa-users"></i>
                     Clients
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.clients.*') && request('converted') === 'false' ? 'active' : '' }}"
+                   href="{{ route('admin.clients.index', ['converted' => 'false']) }}">
+                    <i class="fas fa-user-friends"></i>
+                    Leads
                 </a>
             </li>
 

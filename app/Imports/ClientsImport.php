@@ -3,7 +3,11 @@
 namespace App\Imports;
 
 use App\Models\Client;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\ShouldQueueWithoutChain;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
@@ -14,18 +18,26 @@ class ClientsImport implements
     ToModel,
     WithHeadingRow,
     WithValidation,
-    SkipsOnFailure
+    SkipsOnFailure,
+    WithBatchInserts,
+    WithChunkReading,
+    ShouldQueueWithoutChain
 {
     use SkipsFailures;
 
-    public function __construct(protected string $fileName)
-    {
+    protected bool $converted = true;
+
+    public function __construct(
+        protected string $fileName,
+        bool $converted = true,
+    ) {
         $this->fileName = $fileName;
+        $this->converted = $converted;
     }
 
     /**
      * @param array $row
-     *
+     * b
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function model(array $row)
@@ -39,6 +51,7 @@ class ClientsImport implements
             "status" => $row["status"] ?? "active",
             "email_status" => "pending",
             "imported_from" => $this->fileName,
+            "converted" => false,
         ]);
     }
 
@@ -82,5 +95,15 @@ class ClientsImport implements
                 "A client with this email address already exists.",
             "status.in" => 'Status must be either "active" or "inactive".',
         ];
+    }
+
+    public function batchSize(): int
+    {
+        return 200;
+    }
+
+    public function chunkSize(): int
+    {
+        return 200;
     }
 }

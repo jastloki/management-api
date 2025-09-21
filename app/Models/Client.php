@@ -33,6 +33,7 @@ class Client extends Model
         "email_validation_details",
         "email_last_validated_at",
         "email_validation_attempts",
+        "converted",
     ];
 
     /**
@@ -47,6 +48,7 @@ class Client extends Model
         "email_validation_details" => "array",
         "email_last_validated_at" => "datetime",
         "email_validation_attempts" => "integer",
+        "converted" => "boolean",
     ];
 
     public function user(): BelongsTo

@@ -228,6 +228,7 @@ class RolePermissionController extends Controller
         $permissions = [
             // Client permissions
             "clients.view",
+            "clients.view.leads",
             "clients.create",
             "clients.edit",
             "clients.delete",

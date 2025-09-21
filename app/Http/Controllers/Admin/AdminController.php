@@ -14,13 +14,28 @@ class AdminController extends Controller
     public function dashboard()
     {
         $stats = [
-            "total_clients" => Client::count(),
-            "active_clients" => Client::whereHas("status", function ($query) {
-                $query->where("name", "active");
-            })->count(),
-            "inactive_clients" => Client::whereHas("status", function ($query) {
-                $query->where("name", "inactive");
-            })->count(),
+            "total_clients" => Client::where("converted", true)->count(),
+            "total_leads" => Client::where("converted", false)->count(),
+            "active_clients" => Client::where("converted", true)
+                ->whereHas("status", function ($query) {
+                    $query->where("name", "active");
+                })
+                ->count(),
+            "inactive_clients" => Client::where("converted", true)
+                ->whereHas("status", function ($query) {
+                    $query->where("name", "inactive");
+                })
+                ->count(),
+            "active_leads" => Client::where("converted", false)
+                ->whereHas("status", function ($query) {
+                    $query->where("name", "active");
+                })
+                ->count(),
+            "inactive_leads" => Client::where("converted", false)
+                ->whereHas("status", function ($query) {
+                    $query->where("name", "inactive");
+                })
+                ->count(),
             "total_users" => User::count(),
         ];
 
@@ -56,7 +71,8 @@ class AdminController extends Controller
     public function emailValidationStats()
     {
         $stats = [
-            "total_clients" => Client::count(),
+            "total_clients" => Client::where("converted", true)->count(),
+            "total_leads" => Client::where("converted", false)->count(),
             "total_with_email" => Client::whereNotNull("email")
                 ->where("email", "!=", "")
                 ->count(),

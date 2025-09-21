@@ -1,15 +1,15 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit Client')
-@section('heading', 'Edit Client')
+@section('title', 'Edit ' . ($client->converted ? 'Client' : 'Lead'))
+@section('heading', 'Edit ' . ($client->converted ? 'Client' : 'Lead'))
 
 @section('page-actions')
 <div class="d-flex gap-2 flex-wrap">
-    <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-outline-info">
+    <a href="{{ route('admin.clients.show', array_merge(['client' => $client], ['converted' => $client->converted ? 'true' : 'false'])) }}" class="btn btn-outline-info">
         <i class="bi bi-eye me-2"></i>View Details
     </a>
-    <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-2"></i>Back to Clients
+    <a href="{{ route('admin.clients.index', ['converted' => $client->converted ? 'true' : 'false']) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to {{ $client->converted ? 'Clients' : 'Leads' }}
     </a>
 </div>
 @endsection
@@ -29,7 +29,7 @@
                         <h5 class="card-title mb-0">
                             <i class="bi bi-pencil me-2 text-primary"></i>Edit {{ $client->name }}
                         </h5>
-                        <p class="text-muted small mb-0">Update client information</p>
+                        <p class="text-muted small mb-0">Update {{ $client->converted ? 'client' : 'lead' }} information</p>
                     </div>
                 </div>
             </div>
@@ -38,6 +38,7 @@
                 <form method="POST" action="{{ route('admin.clients.update', $client) }}">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="converted" value="{{ $client->converted ? 'true' : 'false' }}">
 
                     <div class="row">
                         <!-- Name -->
@@ -196,7 +197,7 @@
 
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-light">
+                        <a href="{{ route('admin.clients.show', array_merge(['client' => $client], ['converted' => $client->converted ? 'true' : 'false'])) }}" class="btn btn-light">
                             <i class="bi bi-x-lg me-2"></i>Cancel
                         </a>
                         <button type="submit" class="btn btn-primary px-4">

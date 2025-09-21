@@ -35,6 +35,13 @@ Route::name("admin.")->group(function () {
         // Client Management Routes
         Route::resource("clients", ClientController::class);
 
+        // Leads Management Route (alias for clients with converted=false)
+        Route::get("leads", function () {
+            return redirect()->route("admin.clients.index", [
+                "converted" => "false",
+            ]);
+        })->name("leads.index");
+
         // Client Status Update Route
         Route::patch("/clients/{client}/status", [
             ClientController::class,
@@ -42,10 +49,28 @@ Route::name("admin.")->group(function () {
         ])->name("clients.update.status");
 
         // Client Bulk Status Update Route
-        Route::patch("/clients/bulk-status", [
+        Route::patch("/clients/bulk/bulk-status", [
             ClientController::class,
             "bulkUpdateStatus",
         ])->name("clients.bulk.update.status");
+
+        // Client Bulk Assign Route
+        Route::post("/clients/bulk/bulk-assign", [
+            ClientController::class,
+            "bulkAssign",
+        ])->name("clients.bulk-assign");
+
+        // Client Bulk Delete Route
+        Route::delete("/clients/bulk/bulk-delete", [
+            ClientController::class,
+            "bulkDelete",
+        ])->name("clients.bulk-delete");
+
+        // Client Bulk Make Client Route
+        Route::post("/clients/bulk/bulk-make-client", [
+            ClientController::class,
+            "bulkMakeClient",
+        ])->name("clients.bulk-make-client");
 
         // Status Management Routes
         Route::resource("statuses", StatusController::class);

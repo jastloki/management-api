@@ -23,6 +23,22 @@
     </div>
 
     <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card text-white" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="h5 font-weight-bold">{{ $stats['total_leads'] }}</div>
+                        <div class="small">Total Leads</div>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-person-plus" style="font-size: 2rem; opacity: 0.8;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -78,7 +94,7 @@
             <div class="card-header bg-white border-0 pb-0">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-clock-history me-2 text-primary"></i>Recent Clients
+                        <i class="bi bi-clock-history me-2 text-primary"></i>Recent Leads
                     </h5>
                     <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-eye me-1"></i>View All
@@ -184,23 +200,23 @@
         height: 32px;
         font-size: 0.75rem;
     }
-    
+
     .card-header {
         padding: 1.25rem 1.25rem 0.75rem;
     }
-    
+
     .table th {
         border-top: none;
         font-weight: 600;
         color: #495057;
     }
-    
+
     .card {
         transition: transform 0.2s ease-in-out;
     }
-    
+
     .card:hover {
         transform: translateY(-2px);
     }
 </style>
-@endsection 
+@endsection

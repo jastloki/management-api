@@ -298,10 +298,17 @@
 
                         @permission('clients.view')
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}" href="{{ route('admin.clients.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.clients.*') && request('converted') !== 'false' ? 'active' : '' }}" href="{{ route('admin.clients.index', ['converted' => 'true']) }}">
                                 <i class="bi bi-people me-2"></i>Clients
                             </a>
                         </li>
+                        @permission('clients.view.leads')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.clients.*') && request('converted') === 'false' ? 'active' : '' }}" href="{{ route('admin.clients.index', ['converted' => 'false']) }}">
+                                <i class="bi bi-person-plus me-2"></i>Leads
+                            </a>
+                        </li>
+                        @endpermission
                         @endpermission
 
                         @permission('users.view')

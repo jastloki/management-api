@@ -1,15 +1,15 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Client Details')
-@section('heading', 'Client Details')
+@section('title', ($client->converted ? 'Client' : 'Lead') . ' Details')
+@section('heading', ($client->converted ? 'Client' : 'Lead') . ' Details')
 
 @section('page-actions')
 <div class="d-flex gap-2">
-    <a href="{{ route('admin.clients.edit', $client) }}" class="btn btn-primary">
-        <i class="bi bi-pencil me-2"></i>Edit Client
+    <a href="{{ route('admin.clients.edit', array_merge(['client' => $client], ['converted' => $client->converted ? 'true' : 'false'])) }}" class="btn btn-primary">
+        <i class="bi bi-pencil me-2"></i>Edit {{ $client->converted ? 'Client' : 'Lead' }}
     </a>
-    <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-2"></i>Back to Clients
+    <a href="{{ route('admin.clients.index', ['converted' => $client->converted ? 'true' : 'false']) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to {{ $client->converted ? 'Clients' : 'Leads' }}
     </a>
 </div>
 @endsection

@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->boolean("is_email_valid")->default(false);
             $table->string("email_status")->nullable();
             $table->dateTime("email_sent_at")->nullable();
+            $table->boolean("converted")->default(false);
             $table->string("imported_from")->nullable()->index();
             $table->timestamps();
         });

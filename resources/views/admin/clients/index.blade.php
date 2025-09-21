@@ -1,21 +1,16 @@
 @extends('admin.layouts.app')
-@section('title', 'Clients')
-@section('heading', 'Client Management')
+@section('title', request('converted') === 'false' ? 'Leads' : 'Clients')
+@section('heading', request('converted') === 'false' ? 'Lead Management' : 'Client Management')
 
 @section('page-actions')
 <div class="d-flex gap-2 flex-wrap">
-    <a href="{{ route('admin.clients.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-2"></i>Add New Client
+    <a href="{{ route('admin.clients.create', ['converted' => request('converted', 'true')]) }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Add New {{ request('converted') === 'false' ? 'Lead' : 'Client' }}
     </a>
-    <a href="{{ route('admin.clients.import.show') }}" class="btn btn-success">
+    <a href="{{ route('admin.clients.import.show', ['converted' => request('converted', 'true')]) }}" class="btn btn-success">
         <i class="bi bi-file-earmark-excel me-2"></i>Import from Excel
     </a>
-    <form method="POST" action="{{ route('admin.clients.check.email.validity') }}" style="display: inline;">
-        @csrf
-        <button type="submit" class="btn btn-warning">
-            <i class="bi bi-envelope-check me-2"></i>Check Email Validity
-        </button>
-    </form>
+
     <button type="button" class="btn btn-warning" onclick="showBulkEmailModal()">
         <i class="bi bi-envelope me-2"></i>Send Email to current list
     </button>
@@ -23,28 +18,7 @@
         <i class="bi bi-download me-2"></i>Download Template
     </a>
 
-    <!-- Bulk Actions -->
-    <div class="btn-group bulk-actions" style="display: none;">
-        <button type="button" class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-            <i class="bi bi-check-square me-2"></i>Bulk Actions
-        </button>
-        <ul class="dropdown-menu">
-            <li><h6 class="dropdown-header">Update Status</h6></li>
-            @php
-                $statuses = \App\Models\Status::orderBy('name')->get();
-            @endphp
-            @foreach($statuses as $status)
-                <li>
-                    <a class="dropdown-item bulk-status-update"
-                       href="#"
-                       data-status-id="{{ $status->id }}"
-                       data-status-name="{{ $status->name }}">
-                        <i class="bi bi-tag me-2"></i>Set to {{ $status->name }}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
+
 </div>
 @endsection
 
@@ -90,9 +64,10 @@
         <div class="row align-items-center">
             <div class="col">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-people me-2 text-primary"></i>All Clients
+                    <i class="bi bi-people me-2 text-primary"></i>
+                    {{request('converted') === 'false' ? 'All Leads' : 'All Clients'}}
                 </h5>
-                <p class="text-muted small mb-0">Manage and view all your clients</p>
+                <p class="text-muted small mb-0">Manage and view all your  {{request('converted') === 'false' ? 'leads' : 'clients'}}</p>
             </div>
         </div>
 
@@ -100,6 +75,7 @@
         <div class="row mt-3">
             <div class="col">
                 <form method="GET" action="{{ route('admin.clients.index') }}" class="d-flex gap-3 align-items-end flex-wrap">
+                    <input type="hidden" name="converted" value="{{ request('converted', 'true') }}">
                     <!-- Search -->
                     <div class="flex-fill" style="min-width: 250px;">
                         <label for="search" class="form-label small text-muted">Search</label>
@@ -142,16 +118,67 @@
                         </select>
                     </div>
 
+                    <!-- Records Per Page -->
+                    <div style="min-width: 100px;">
+                        <label for="limit" class="form-label small text-muted">Show</label>
+                        <select name="limit" id="limit" class="form-select">
+                            <option value="50" {{ request('limit', '50') == '50' ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ request('limit') == '100' ? 'selected' : '' }}>100</option>
+                            <option value="500" {{ request('limit') == '500' ? 'selected' : '' }}>500</option>
+                        </select>
+                    </div>
+
                     <!-- Filter Actions -->
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-funnel me-1"></i>Filter
                         </button>
-                        <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x-lg me-1"></i>Clear
-                        </a>
+
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="row mt-3" id="bulkActionsContainer" style="display: none;">
+            <div class="col">
+                <div class="alert alert-info d-flex align-items-center gap-3 mb-0">
+                    <span class="fw-semibold">
+                        <i class="bi bi-check-square me-1"></i>
+                        <span id="selectedCount">0</span> items selected
+                    </span>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="bulkActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-list-task me-2"></i>Bulk Actions
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="bulkActionsDropdown">
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="bulkAssign()">
+                                    <i class="bi bi-person-check me-2"></i>Assign to User
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="bulkUpdateStatus()">
+                                    <i class="bi bi-tag me-2"></i>Update Status
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="bulkMakeClient()">
+                                    <i class="bi bi-person-badge me-2"></i>Make Client
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="#" onclick="bulkDelete()">
+                                    <i class="bi bi-trash me-2"></i>Delete Selected
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-sm btn-link text-decoration-none" onclick="clearSelection()">
+                        <i class="bi bi-x-lg me-1"></i>Clear Selection
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -165,10 +192,8 @@
                             <th class="ps-3">
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
-                            <th>Client</th>
                             <th>Contact Information</th>
-                            <th>Email Validation</th>
-                            <th>Company</th>
+                            <th>Assigned</th>
                             <th>Status</th>
                             <th>Comments</th>
                             <th>Joined</th>
@@ -181,22 +206,7 @@
                             <td class="ps-3">
                                 <input type="checkbox" class="form-check-input client-checkbox" value="{{ $client->id }}">
                             </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-md bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
-                                        <span class="text-white font-weight-bold">
-                                            {{ strtoupper(substr($client->name, 0, 2)) }}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">{{ $client->name }}</h6>
-                                        <small class="text-muted">ID: #{{ $client->id }}</small>
-                                        @if($client->user)
-                                            <div><small class="text-info"><i class="bi bi-person me-1"></i>{{ $client->user->name }}</small></div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
+
                             <td>
                                 <div>
                                     <div><i class="bi bi-envelope me-1 text-muted"></i>{{ $client->email }}</div>
@@ -205,19 +215,9 @@
                                     @endif
                                 </div>
                             </td>
+
                             <td>
-                                @if($client->is_email_valid)
-                                    <span class="badge bg-success-soft text-success px-3 py-2">
-                                        <i class="bi bi-check-circle me-1"></i>Valid
-                                    </span>
-                                @else
-                                    <span class="badge bg-danger-soft text-danger px-3 py-2">
-                                        <i class="bi bi-x-circle me-1"></i>Invalid
-                                    </span>
-                                @endif
-                            </td>
-                            <td>
-                                {{ $client->company ?? '-' }}
+                                {{ $client->user?->name ?? '-' }}
                             </td>
                             <td>
                                 <div class="dropdown">
@@ -255,7 +255,17 @@
                                 </div>
                             </td>
                             <td style="min-width: 250px; max-width: 300px;">
-                                @livewire('client-comments-compact', ['client' => $client], key('client-comments-'.$client->id))
+                                @if($client->comments->count() > 0)
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-chat-dots me-2 text-primary"></i>
+                                        <span class="badge bg-primary">{{ $client->comments->count() }}</span>
+                                        <small class="text-muted ms-2">
+                                            Latest: {{ $client->comments->first()->created_at->diffForHumans() }}
+                                        </small>
+                                    </div>
+                                @else
+                                    <span class="text-muted">No comments</span>
+                                @endif
                             </td>
                             <td>
                                 <div>{{ $client->created_at->format('M d, Y') }}</div>
@@ -269,14 +279,14 @@
                                     <ul class="dropdown-menu">
                                         @can('clients.view')
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('admin.clients.show', $client) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.clients.show', array_merge(['client' => $client], request()->only('converted'))) }}">
                                                 <i class="bi bi-eye me-2"></i>View Details
                                             </a>
                                         </li>
                                         @endcan
                                         @can('clients.edit')
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('admin.clients.edit', $client) }}">
+                                            <a class="dropdown-item" href="{{ route('admin.clients.edit', array_merge(['client' => $client], request()->only('converted'))) }}">
                                                 <i class="bi bi-pencil me-2"></i>Edit
                                             </a>
                                         </li>
@@ -309,6 +319,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-muted small">
                             Showing {{ $clients->firstItem() }} to {{ $clients->lastItem() }} of {{ $clients->total() }} results
+                            ({{ $clients->perPage() }} per page)
                         </div>
                         {{ $clients->links() }}
                     </div>
@@ -318,10 +329,10 @@
             <!-- Empty State -->
             <div class="text-center py-5">
                 <i class="bi bi-people display-1 text-muted mb-4"></i>
-                <h4 class="text-muted">No Clients Found</h4>
-                <p class="text-muted mb-4">You haven't added any clients yet. Start by adding your first client.</p>
-                <a href="{{ route('admin.clients.create') }}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-lg me-2"></i>Add Your First Client
+                <h4 class="text-muted">No {{ request('converted') === 'false' ? 'Leads' : 'Clients' }} Found</h4>
+                <p class="text-muted mb-4">You haven't added any {{ request('converted') === 'false' ? 'leads' : 'clients' }} yet. Start by adding your first {{ request('converted') === 'false' ? 'lead' : 'client' }}.</p>
+                <a href="{{ route('admin.clients.create', ['converted' => request('converted', 'true')]) }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-lg me-2"></i>Add Your First {{ request('converted') === 'false' ? 'Lead' : 'Client' }}
                 </a>
             </div>
         @endif
@@ -339,7 +350,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this client? This action cannot be undone.</p>
+                <p>Are you sure you want to delete this {{ request('converted') === 'false' ? 'lead' : 'client' }}? This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -347,7 +358,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i>Delete Client
+                        <i class="bi bi-trash me-1"></i>Delete {{ request('converted') === 'false' ? 'Lead' : 'Client' }}
                     </button>
                 </form>
             </div>
@@ -539,20 +550,253 @@
     </div>
 </div>
 
+<!-- Bulk Assign Modal -->
+<div class="modal fade" id="bulkAssignModal" tabindex="-1" aria-labelledby="bulkAssignModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkAssignModalLabel">
+                    <i class="bi bi-person-check me-2"></i>Assign Clients to User
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Select a user to assign the selected clients to:</p>
+                <select class="form-select" id="bulkAssignUserId">
+                    <option value="">Select a user...</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitBulkAssign()">
+                    <i class="bi bi-check-lg me-1"></i>Assign
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Status Modal -->
+<div class="modal fade" id="bulkStatusModal" tabindex="-1" aria-labelledby="bulkStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkStatusModalLabel">
+                    <i class="bi bi-tag me-2"></i>Update Client Status
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Select a status to apply to the selected clients:</p>
+                <select class="form-select" id="bulkStatusId">
+                    <option value="">Select a status...</option>
+                    @foreach($statuses as $status)
+                        <option value="{{ $status->id }}">{{ $status->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitBulkStatus()">
+                    <i class="bi bi-check-lg me-1"></i>Update Status
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Forms for Bulk Actions -->
+<form id="bulkAssignForm" method="POST" action="{{ route('admin.clients.bulk-assign') }}" style="display: none;">
+    @csrf
+    <input type="hidden" name="client_ids" id="bulkAssignClientIds">
+    <input type="hidden" name="user_id" id="bulkAssignUserIdField">
+</form>
+
+<form id="bulkDeleteForm" method="POST" action="{{ route('admin.clients.bulk-delete') }}" style="display: none;">
+    @csrf
+    @method('DELETE')
+    <input type="hidden" name="client_ids" id="bulkDeleteClientIds">
+</form>
+
+<form id="bulkMakeClientForm" method="POST" action="{{ route('admin.clients.bulk-make-client') }}" style="display: none;">
+    @csrf
+    <input type="hidden" name="client_ids" id="bulkMakeClientIds">
+</form>
+
 @endsection
 
 @section('scripts')
 <script>
-    // Search functionality
-    document.getElementById('clientSearch').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const tableRows = document.querySelectorAll('#clientsTable tbody tr');
+    // Bulk Actions JavaScript
+    let selectedClients = new Set();
 
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchTerm) ? '' : 'none';
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle select all checkbox
+        const selectAllCheckbox = document.getElementById('selectAll');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.client-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    if (this.checked) {
+                        selectedClients.add(checkbox.value);
+                    } else {
+                        selectedClients.delete(checkbox.value);
+                    }
+                });
+                updateBulkActionsVisibility();
+            });
+        }
+
+        // Handle individual checkboxes
+        document.querySelectorAll('.client-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    selectedClients.add(this.value);
+                } else {
+                    selectedClients.delete(this.value);
+                    document.getElementById('selectAll').checked = false;
+                }
+                updateBulkActionsVisibility();
+            });
         });
     });
+
+    function updateBulkActionsVisibility() {
+        const bulkActionsContainer = document.getElementById('bulkActionsContainer');
+        const selectedCount = document.getElementById('selectedCount');
+
+        if (selectedClients.size > 0) {
+            bulkActionsContainer.style.display = 'block';
+            selectedCount.textContent = selectedClients.size;
+        } else {
+            bulkActionsContainer.style.display = 'none';
+        }
+    }
+
+    function clearSelection() {
+        selectedClients.clear();
+        document.getElementById('selectAll').checked = false;
+        document.querySelectorAll('.client-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        updateBulkActionsVisibility();
+    }
+
+    function getSelectedClientIds() {
+        return Array.from(selectedClients);
+    }
+
+    function bulkAssign() {
+        if (selectedClients.size === 0) {
+            alert('Please select at least one client');
+            return;
+        }
+
+        // Show modal for user selection
+        const modal = new bootstrap.Modal(document.getElementById('bulkAssignModal'));
+        modal.show();
+    }
+
+    function bulkUpdateStatus() {
+        if (selectedClients.size === 0) {
+            alert('Please select at least one client');
+            return;
+        }
+
+        // Show modal for status selection
+        const modal = new bootstrap.Modal(document.getElementById('bulkStatusModal'));
+        modal.show();
+    }
+
+    function bulkDelete() {
+        if (selectedClients.size === 0) {
+            alert('Please select at least one client');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete ${selectedClients.size} client(s)? This action cannot be undone.`)) {
+            // Submit form for bulk delete
+            const form = document.getElementById('bulkDeleteForm');
+            const clientIdsInput = document.getElementById('bulkDeleteClientIds');
+            clientIdsInput.value = JSON.stringify(getSelectedClientIds());
+            form.submit();
+        }
+    }
+
+    function bulkMakeClient() {
+        if (selectedClients.size === 0) {
+            alert('Please select at least one client');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to mark ${selectedClients.size} client(s) as converted? This will set their converted status to true.`)) {
+            // Submit form for bulk make client
+            const form = document.getElementById('bulkMakeClientForm');
+            const clientIdsInput = document.getElementById('bulkMakeClientIds');
+            clientIdsInput.value = JSON.stringify(getSelectedClientIds());
+            form.submit();
+        }
+    }
+
+    function submitBulkAssign() {
+        const userId = document.getElementById('bulkAssignUserId').value;
+        if (!userId) {
+            alert('Please select a user');
+            return;
+        }
+
+        const form = document.getElementById('bulkAssignForm');
+        const clientIdsInput = document.getElementById('bulkAssignClientIds');
+        const userIdInput = document.getElementById('bulkAssignUserIdField');
+        clientIdsInput.value = JSON.stringify(getSelectedClientIds());
+        userIdInput.value = userId;
+        form.submit();
+    }
+
+    function submitBulkStatus() {
+        const statusId = document.getElementById('bulkStatusId').value;
+        if (!statusId) {
+            alert('Please select a status');
+            return;
+        }
+
+        // Use existing bulk status update endpoint
+        fetch('{{ route("admin.clients.bulk.update.status") }}', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                client_ids: getSelectedClientIds(),
+                status_id: statusId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal and reload page
+                bootstrap.Modal.getInstance(document.getElementById('bulkStatusModal')).hide();
+                window.location.reload();
+            } else {
+                alert('Error updating status');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating status');
+        });
+    }
+</script>
+
+<script>
+
 
     // Delete confirmation
     function confirmDelete(clientId) {
@@ -568,13 +812,11 @@
         checkboxes.forEach(checkbox => {
             checkbox.checked = e.target.checked;
         });
-        updateBulkActionsVisibility();
     });
 
     // Individual checkbox change
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('client-checkbox')) {
-            updateBulkActionsVisibility();
 
             // Update select all checkbox state
             const allCheckboxes = document.querySelectorAll('.client-checkbox');
@@ -593,16 +835,7 @@
         }
     });
 
-    function updateBulkActionsVisibility() {
-        const checkedCheckboxes = document.querySelectorAll('.client-checkbox:checked');
-        const bulkActions = document.querySelector('.bulk-actions');
 
-        if (checkedCheckboxes.length > 0) {
-            bulkActions.style.display = 'block';
-        } else {
-            bulkActions.style.display = 'none';
-        }
-    }
 
     // Bulk status update
     document.addEventListener('click', function(e) {
@@ -699,6 +932,10 @@
     });
 
     document.getElementById('user_id').addEventListener('change', function() {
+        this.form.submit();
+    });
+
+    document.getElementById('limit').addEventListener('change', function() {
         this.form.submit();
     });
 
@@ -905,5 +1142,6 @@
     document.getElementById('status_id').addEventListener('change', updateActiveFiltersIndicator);
     document.getElementById('user_id').addEventListener('change', updateActiveFiltersIndicator);
     document.getElementById('search').addEventListener('input', updateActiveFiltersIndicator);
+    document.getElementById('limit').addEventListener('change', updateActiveFiltersIndicator);
 </script>
 @endsection

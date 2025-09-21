@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Import Clients')
-@section('heading', 'Import Clients from Excel')
+@section('title', 'Import ' . (request('converted') === 'false' ? 'Leads' : 'Clients'))
+@section('heading', 'Import ' . (request('converted') === 'false' ? 'Leads' : 'Clients') . ' from Excel')
 
 @section('content')
 <div class="row justify-content-center">
@@ -9,11 +9,11 @@
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-file-earmark-excel me-2"></i>Import Clients from Excel
+                    <i class="bi bi-file-earmark-excel me-2"></i>Import {{ request('converted') === 'false' ? 'Leads' : 'Clients' }} from Excel
                 </h5>
-                <p class="mb-0 small opacity-75">Upload an Excel file to import multiple clients at once</p>
+                <p class="mb-0 small opacity-75">Upload an Excel file to import multiple {{ request('converted') === 'false' ? 'leads' : 'clients' }} at once</p>
             </div>
-            
+
             <div class="card-body">
                 <!-- Instructions -->
                 <div class="alert alert-info mb-4">
@@ -34,20 +34,21 @@
                 </div>
 
                 <!-- Upload Form -->
-                <form action="{{ route('admin.clients.import') }}" method="POST" enctype="multipart/form-data" id="importForm">
+                <form action="{{ route('admin.clients.import', ['converted' => request('converted', 'true')]) }}" method="POST" enctype="multipart/form-data" id="importForm">
                     @csrf
-                    
+                    <input type="hidden" name="converted" value="{{ request('converted', 'true') }}">
+
                     <div class="mb-4">
                         <label for="file" class="form-label fw-bold">Select Excel File</label>
                         <div class="input-group">
-                            <input type="file" 
-                                   class="form-control @error('file') is-invalid @enderror" 
-                                   id="file" 
-                                   name="file" 
+                            <input type="file"
+                                   class="form-control @error('file') is-invalid @enderror"
+                                   id="file"
+                                   name="file"
                                    accept=".xlsx,.xls,.csv"
                                    required>
                             <button class="btn btn-primary" type="submit" id="uploadBtn">
-                                <i class="bi bi-upload me-1"></i>Import Clients
+                                <i class="bi bi-upload me-1"></i>Import {{ request('converted') === 'false' ? 'Leads' : 'Clients' }}
                             </button>
                         </div>
                         @error('file')
@@ -75,8 +76,8 @@
                 <!-- Progress Bar -->
                 <div id="uploadProgress" class="d-none">
                     <div class="progress mb-2">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" 
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                             role="progressbar"
                              style="width: 100%">
                         </div>
                     </div>
@@ -167,4 +168,4 @@
         });
     });
 </script>
-@endsection 
+@endsection

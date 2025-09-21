@@ -29,6 +29,7 @@ class RolePermissionSeeder extends Seeder
             "clients.status.update",
             "clients.comment.create",
             "clients.view.all",
+            "clients.view.leads",
 
             // Status permissions
             "statuses.view",
@@ -91,6 +92,7 @@ class RolePermissionSeeder extends Seeder
         // Assign permissions to manager role
         $managerRole->syncPermissions([
             "clients.view",
+            "clients.view.leads",
             "clients.create",
             "clients.edit",
             "clients.import",

@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Add New Client')
-@section('heading', 'Add New Client')
+@section('title', 'Add New ' . (request('converted') === 'false' ? 'Lead' : 'Client'))
+@section('heading', 'Add New ' . (request('converted') === 'false' ? 'Lead' : 'Client'))
 
 @section('page-actions')
-<a href="{{ route('admin.clients.index') }}" class="btn btn-outline-secondary">
-    <i class="bi bi-arrow-left me-2"></i>Back to Clients
+<a href="{{ route('admin.clients.index', ['converted' => request('converted')]) }}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-2"></i>Back to {{ request('converted') === 'false' ? 'Leads' : 'Clients' }}
 </a>
 @endsection
 
@@ -15,14 +15,15 @@
         <div class="card">
             <div class="card-header bg-white border-0">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-person-plus me-2 text-primary"></i>Client Information
+                    <i class="bi bi-person-plus me-2 text-primary"></i>{{ request('converted') === 'false' ? 'Lead' : 'Client' }} Information
                 </h5>
-                <p class="text-muted small mb-0">Fill in the details to add a new client</p>
+                <p class="text-muted small mb-0">Fill in the details to add a new {{ request('converted') === 'false' ? 'lead' : 'client' }}</p>
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('admin.clients.store') }}">
+                <form method="POST" action="{{ route('admin.clients.store', ['converted' => request('converted')]) }}">
                     @csrf
+                    <input type="hidden" name="converted" value="{{ request('converted', 'true') }}">
 
                     <div class="row">
                         <!-- Name -->
@@ -35,7 +36,7 @@
                                    id="name"
                                    name="name"
                                    value="{{ old('name') }}"
-                                   placeholder="Enter client's full name"
+                                   placeholder="Enter {{ request('converted') === 'false' ? 'lead' : 'client' }}'s full name"
                                    required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -175,11 +176,11 @@
 
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.clients.index') }}" class="btn btn-light">
+                        <a href="{{ route('admin.clients.index', ['converted' => request('converted')]) }}" class="btn btn-light">
                             <i class="bi bi-x-lg me-2"></i>Cancel
                         </a>
                         <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-check-lg me-2"></i>Create Client
+                            <i class="bi bi-check-lg me-2"></i>Create {{ request('converted') === 'false' ? 'Lead' : 'Client' }}
                         </button>
                     </div>
                 </form>

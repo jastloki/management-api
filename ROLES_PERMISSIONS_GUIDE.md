@@ -24,7 +24,8 @@ Three default roles are created when you run the seeder:
 
 The system includes the following permission categories:
 
-- **Clients**: `clients.view`, `clients.create`, `clients.edit`, `clients.delete`, `clients.import`, `clients.export`
+- **Clients**: `clients.view`, `clients.view.leads`, `clients.create`, `clients.edit`, `clients.delete`, `clients.import`, `clients.export`
+  - `clients.view.leads`: Controls whether users can view and manage leads (clients with converted=false)
 - **Statuses**: `statuses.view`, `statuses.create`, `statuses.edit`, `statuses.delete`
 - **Emails**: `emails.view`, `emails.send`, `emails.analytics`, `emails.providers`
 - **Roles**: `roles.view`, `roles.create`, `roles.edit`, `roles.delete`
@@ -98,7 +99,7 @@ Route::post('/clients', [ClientController::class, 'store'])
 
 ### Blade Templates
 
-Use custom Blade directives to conditionally show content:
+Use permission and role directives:
 
 ```blade
 @permission('clients.create')
@@ -107,11 +108,18 @@ Use custom Blade directives to conditionally show content:
     </a>
 @endpermission
 
+@permission('clients.view.leads')
+    <a href="{{ route('admin.clients.index', ['converted' => 'false']) }}" class="btn btn-secondary">
+        View Leads
+    </a>
+@endpermission
+
 @role('admin')
     <div class="admin-only-content">
         This is only visible to admins
     </div>
 @endrole
+```
 
 @anyrole('admin', 'manager')
     <div class="management-content">
@@ -146,10 +154,11 @@ $user->givePermissionTo('custom.permission');
 
 ### Permission Naming Convention
 
-Use the format: `module.action`
+Use the format: `module.action` or `module.action.scope`
 
 Examples:
 - `clients.view`
+- `clients.view.leads` (scoped to leads only)
 - `users.create`
 - `reports.export`
 - `settings.manage`
