@@ -130,8 +130,8 @@ class EmailTemplate extends Model
         foreach ($data as $key => $value) {
             $placeholder = "{{" . $key . "}}";
 
-            $subject = str_replace($placeholder, $value, $subject);
-            $content = str_replace($placeholder, $value, $content);
+            $subject = str_replace($placeholder, "$value", $subject);
+            $content = str_replace($placeholder, "$value", $content);
         }
 
         return [

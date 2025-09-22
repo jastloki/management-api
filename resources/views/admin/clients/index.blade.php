@@ -316,12 +316,8 @@
             <!-- Pagination -->
             @if($clients->hasPages())
                 <div class="card-footer bg-white border-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-muted small">
-                            Showing {{ $clients->firstItem() }} to {{ $clients->lastItem() }} of {{ $clients->total() }} results
-                            ({{ $clients->perPage() }} per page)
-                        </div>
-                        {{ $clients->links() }}
+                    <div class="d-flex justify-content-start align-items-start">
+                        {{ $clients->onEachSide(5)->links() }}
                     </div>
                 </div>
             @endif
@@ -1123,16 +1119,7 @@
         if (userFilter) activeFilters++;
         if (searchFilter) activeFilters++;
 
-        const filterButton = document.querySelector('button[type="submit"]');
-        if (activeFilters > 0) {
-            filterButton.innerHTML = `<i class="bi bi-funnel-fill me-1"></i>Filter (${activeFilters})`;
-            filterButton.classList.remove('btn-primary');
-            filterButton.classList.add('btn-success');
-        } else {
-            filterButton.innerHTML = '<i class="bi bi-funnel me-1"></i>Filter';
-            filterButton.classList.remove('btn-success');
-            filterButton.classList.add('btn-primary');
-        }
+
     }
 
     // Initialize filter indicator

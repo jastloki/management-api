@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 
@@ -34,5 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::if("anyrole", function (...$roles) {
             return auth()->check() && auth()->user()->hasAnyRole($roles);
         });
+
+        Paginator::useBootstrapFive();
     }
 }
