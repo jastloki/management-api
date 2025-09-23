@@ -80,7 +80,7 @@ class CheckClientEmailValidityJob implements ShouldQueue
     public function handle()
     {
         try {
-            Log::info("Starting email validity check job", [
+            Log::info("Starting email validity job", [
                 "page" => $this->page,
                 "chunk_size" => $this->chunkSize,
                 "attempt" => $this->attempts(),
