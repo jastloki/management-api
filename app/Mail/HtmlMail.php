@@ -97,12 +97,13 @@ class HtmlMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: "emails.template",
-            with: [
-                "content" => $this->parsedContent["content"] ?? "",
-                "client" => $this->client,
-                "template" => $this->template,
-            ],
+            // view: "emails.template",
+            // with: [
+            //     "content" => $this->parsedContent["content"] ?? "",
+            //     "client" => $this->client,
+            //     "template" => $this->template,
+            // ],
+            htmlString: $this->parsedContent["content"],
         );
     }
 

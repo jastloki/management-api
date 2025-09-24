@@ -10,6 +10,12 @@
     <a href="{{ route('admin.clients.import.show', ['converted' => request('converted', 'true')]) }}" class="btn btn-success">
         <i class="bi bi-file-earmark-excel me-2"></i>Import from Excel
     </a>
+    <!--<form method="POST" action="{{ route('admin.clients.check.email.validity') }}" style="display: inline;">
+           @csrf
+           <button type="submit" class="btn btn-warning">
+               <i class="bi bi-envelope-check me-2"></i>Check Email Validity
+           </button>
+    </form>-->
 
     <button type="button" class="btn btn-warning" onclick="showBulkEmailModal()">
         <i class="bi bi-envelope me-2"></i>Send Email to current list
@@ -193,6 +199,7 @@
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
                             <th>Contact Information</th>
+                            <!--<th>Email Validation</th>-->
                             <th>Assigned</th>
                             <th>Status</th>
                             <th>Comments</th>
@@ -215,7 +222,17 @@
                                     @endif
                                 </div>
                             </td>
-
+                            <!--<td>
+                                                          @if($client->is_email_valid)
+                                                              <span class="badge bg-success-soft text-success px-3 py-2">
+                                                                  <i class="bi bi-check-circle me-1"></i>Valid
+                                                              </span>
+                                                          @else
+                                                              <span class="badge bg-danger-soft text-danger px-3 py-2">
+                                                                  <i class="bi bi-x-circle me-1"></i>Invalid
+                                                              </span>
+                                                          @endif
+                                                      </td>-->
                             <td>
                                 {{ $client->user?->name ?? '-' }}
                             </td>
