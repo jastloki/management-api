@@ -73,6 +73,18 @@ class HtmlMail extends Mailable implements ShouldQueue
 
         // Parse the template with the data
         $this->parsedContent = $this->template->parse($data);
+
+        if (isset($this->parsedContent["content"])) {
+            // Decode HTML entities like &nbsp; into regular characters (like a space).
+            $decodedContent = html_entity_decode(
+                $this->parsedContent["content"],
+                ENT_QUOTES,
+                "UTF-8",
+            );
+
+            // Replace the original parsed content with the cleaned version.
+            $this->parsedContent["content"] = $decodedContent;
+        }
     }
 
     /**
