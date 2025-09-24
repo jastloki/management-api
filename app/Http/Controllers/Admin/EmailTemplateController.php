@@ -42,12 +42,6 @@ class EmailTemplateController extends Controller
             "is_active" => "boolean",
         ]);
 
-        $validated["content"] = html_entity_decode(
-            $validated["content"],
-            ENT_QUOTES,
-            "UTF-8",
-        );
-
         $template = new EmailTemplate($validated);
 
         // Extract variables from content and subject
@@ -99,11 +93,6 @@ class EmailTemplateController extends Controller
             "is_active" => "boolean",
         ]);
 
-        $validated["content"] = html_entity_decode(
-            $validated["content"],
-            ENT_QUOTES,
-            "UTF-8",
-        );
         $emailTemplate->fill($validated);
 
         // Extract variables from content and subject

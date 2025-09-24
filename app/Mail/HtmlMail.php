@@ -85,6 +85,8 @@ class HtmlMail extends Mailable implements ShouldQueue
             // Replace the original parsed content with the cleaned version.
             $this->parsedContent["content"] = $decodedContent;
         }
+        echo $this->parsedContent["content"];
+        dd(1);
     }
 
     /**
