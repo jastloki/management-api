@@ -16,10 +16,9 @@ class EmailTemplateController extends Controller
      */
     public function index()
     {
-        $templates = EmailTemplate::orderBy('name')
-            ->paginate(15);
+        $templates = EmailTemplate::orderBy("name")->paginate(15);
 
-        return view('admin.email-templates.index', compact('templates'));
+        return view("admin.email-templates.index", compact("templates"));
     }
 
     /**
@@ -27,7 +26,7 @@ class EmailTemplateController extends Controller
      */
     public function create()
     {
-        return view('admin.email-templates.create');
+        return view("admin.email-templates.create");
     }
 
     /**
@@ -36,12 +35,18 @@ class EmailTemplateController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:email_templates,name',
-            'subject' => 'required|string|max:255',
-            'content' => 'required|string',
-            'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            "name" => "required|string|max:255|unique:email_templates,name",
+            "subject" => "required|string|max:255",
+            "content" => "required|string",
+            "description" => "nullable|string|max:1000",
+            "is_active" => "boolean",
         ]);
+
+        $validated["content"] = html_entity_decode(
+            $validated["content"],
+            ENT_QUOTES,
+            "UTF-8",
+        );
 
         $template = new EmailTemplate($validated);
 
@@ -50,8 +55,8 @@ class EmailTemplateController extends Controller
         $template->save();
 
         return redirect()
-            ->route('admin.email-templates.index')
-            ->with('success', 'Email template created successfully.');
+            ->route("admin.email-templates.index")
+            ->with("success", "Email template created successfully.");
     }
 
     /**
@@ -59,8 +64,8 @@ class EmailTemplateController extends Controller
      */
     public function show(EmailTemplate $emailTemplate)
     {
-        return view('admin.email-templates.show', [
-            'template' => $emailTemplate
+        return view("admin.email-templates.show", [
+            "template" => $emailTemplate,
         ]);
     }
 
@@ -69,8 +74,8 @@ class EmailTemplateController extends Controller
      */
     public function edit(EmailTemplate $emailTemplate)
     {
-        return view('admin.email-templates.edit', [
-            'template' => $emailTemplate
+        return view("admin.email-templates.edit", [
+            "template" => $emailTemplate,
         ]);
     }
 
@@ -80,18 +85,25 @@ class EmailTemplateController extends Controller
     public function update(Request $request, EmailTemplate $emailTemplate)
     {
         $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('email_templates', 'name')->ignore($emailTemplate->id),
+            "name" => [
+                "required",
+                "string",
+                "max:255",
+                Rule::unique("email_templates", "name")->ignore(
+                    $emailTemplate->id,
+                ),
             ],
-            'subject' => 'required|string|max:255',
-            'content' => 'required|string',
-            'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            "subject" => "required|string|max:255",
+            "content" => "required|string",
+            "description" => "nullable|string|max:1000",
+            "is_active" => "boolean",
         ]);
 
+        $validated["content"] = html_entity_decode(
+            $validated["content"],
+            ENT_QUOTES,
+            "UTF-8",
+        );
         $emailTemplate->fill($validated);
 
         // Extract variables from content and subject
@@ -99,8 +111,8 @@ class EmailTemplateController extends Controller
         $emailTemplate->save();
 
         return redirect()
-            ->route('admin.email-templates.index')
-            ->with('success', 'Email template updated successfully.');
+            ->route("admin.email-templates.index")
+            ->with("success", "Email template updated successfully.");
     }
 
     /**
@@ -112,12 +124,15 @@ class EmailTemplateController extends Controller
             $emailTemplate->delete();
 
             return redirect()
-                ->route('admin.email-templates.index')
-                ->with('success', 'Email template deleted successfully.');
+                ->route("admin.email-templates.index")
+                ->with("success", "Email template deleted successfully.");
         } catch (\Exception $e) {
             return redirect()
-                ->route('admin.email-templates.index')
-                ->with('error', 'Unable to delete email template. It may be in use.');
+                ->route("admin.email-templates.index")
+                ->with(
+                    "error",
+                    "Unable to delete email template. It may be in use.",
+                );
         }
     }
 
@@ -129,11 +144,11 @@ class EmailTemplateController extends Controller
         $emailTemplate->is_active = !$emailTemplate->is_active;
         $emailTemplate->save();
 
-        $status = $emailTemplate->is_active ? 'activated' : 'deactivated';
+        $status = $emailTemplate->is_active ? "activated" : "deactivated";
 
         return redirect()
-            ->route('admin.email-templates.index')
-            ->with('success', "Email template {$status} successfully.");
+            ->route("admin.email-templates.index")
+            ->with("success", "Email template {$status} successfully.");
     }
 
     /**
@@ -143,24 +158,24 @@ class EmailTemplateController extends Controller
     {
         // Sample data for preview
         $sampleData = [
-            'client_name' => 'John Doe',
-            'client_email' => 'john.doe@example.com',
-            'app_name' => config('app.name'),
-            'registration_date' => now()->format('F j, Y'),
-            'new_status' => 'Active',
-            'old_status' => 'Pending',
-            'update_date' => now()->format('F j, Y g:i A'),
-            'user_name' => 'Jane Smith',
-            'reset_link' => url('/password/reset/sample-token'),
-            'expiry_time' => '24',
+            "client_name" => "John Doe",
+            "client_email" => "john.doe@example.com",
+            "app_name" => config("app.name"),
+            "registration_date" => now()->format("F j, Y"),
+            "new_status" => "Active",
+            "old_status" => "Pending",
+            "update_date" => now()->format("F j, Y g:i A"),
+            "user_name" => "Jane Smith",
+            "reset_link" => url("/password/reset/sample-token"),
+            "expiry_time" => "24",
         ];
 
         $parsed = $emailTemplate->parse($sampleData);
 
         return response()->json([
-            'success' => true,
-            'subject' => $parsed['subject'],
-            'content' => $parsed['content'],
+            "success" => true,
+            "subject" => $parsed["subject"],
+            "content" => $parsed["content"],
         ]);
     }
 
@@ -173,7 +188,10 @@ class EmailTemplateController extends Controller
         $created = 0;
 
         foreach ($defaults as $key => $templateData) {
-            $exists = EmailTemplate::where('name', $templateData['name'])->exists();
+            $exists = EmailTemplate::where(
+                "name",
+                $templateData["name"],
+            )->exists();
 
             if (!$exists) {
                 EmailTemplate::create($templateData);
@@ -183,13 +201,16 @@ class EmailTemplateController extends Controller
 
         if ($created > 0) {
             return redirect()
-                ->route('admin.email-templates.index')
-                ->with('success', "{$created} default template(s) loaded successfully.");
+                ->route("admin.email-templates.index")
+                ->with(
+                    "success",
+                    "{$created} default template(s) loaded successfully.",
+                );
         }
 
         return redirect()
-            ->route('admin.email-templates.index')
-            ->with('info', 'All default templates already exist.');
+            ->route("admin.email-templates.index")
+            ->with("info", "All default templates already exist.");
     }
 
     /**
@@ -198,12 +219,12 @@ class EmailTemplateController extends Controller
     public function duplicate(EmailTemplate $emailTemplate)
     {
         $newTemplate = $emailTemplate->replicate();
-        $newTemplate->name = $emailTemplate->name . ' (Copy)';
+        $newTemplate->name = $emailTemplate->name . " (Copy)";
         $newTemplate->is_active = false;
         $newTemplate->save();
 
         return redirect()
-            ->route('admin.email-templates.edit', $newTemplate)
-            ->with('success', 'Email template duplicated successfully.');
+            ->route("admin.email-templates.edit", $newTemplate)
+            ->with("success", "Email template duplicated successfully.");
     }
 }
