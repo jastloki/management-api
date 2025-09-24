@@ -471,7 +471,7 @@ class ClientController extends Controller
             CheckClientEmailValidityJob::dispatch(1, $chunkSize);
 
             return redirect()
-                ->route("admin.clients.index")
+                ->route("admin.leads.index")
                 ->with(
                     "success",
                     "Email validation job started. Processing {$totalInvalidClients} clients in chunks of {$chunkSize}. Check logs for progress.",
