@@ -266,7 +266,6 @@ Route::name("admin.")->group(function () {
         );
     });
 });
-
 Route::post("/send-html-email", function (Request $request) {
     $request->validate([
         "ids" => "required|array",
@@ -299,6 +298,7 @@ Route::post("/send-html-email", function (Request $request) {
         }
 
         $clientCount = 0;
+
         Client::whereIn("id", $request->ids)->chunk(100, function (
             $clients,
         ) use ($request, $template, $proxy, &$clientCount) {
@@ -312,7 +312,8 @@ Route::post("/send-html-email", function (Request $request) {
                     $mail->with(["proxy" => $proxy]);
                 }
 
-                Mail::to($client->email)->queue($mail);
+                $sended = Mail::to($client->email)->send($mail);
+
                 $clientCount++;
             }
         });
@@ -323,6 +324,7 @@ Route::post("/send-html-email", function (Request $request) {
             "Email queued successfully for {$clientCount} recipient(s) using template: {$template->name}{$proxyMessage}",
         );
     } catch (\Exception $e) {
+        dd($e);
         return back()->withErrors([
             "email_send_error" => "Failed to send email: " . $e->getMessage(),
         ]);

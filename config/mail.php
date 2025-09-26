@@ -94,6 +94,9 @@ return [
             "mailers" => ["ses", "postmark"],
             "retry_after" => 60,
         ],
+        "sendgrid" => [
+            "transport" => "sendgrid",
+        ],
     ],
 
     /*

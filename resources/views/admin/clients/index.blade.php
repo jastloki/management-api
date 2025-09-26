@@ -1024,7 +1024,7 @@
 
         // Update recipient info
         const recipientText = document.getElementById('recipientText');
-        recipientText.textContent = `This email will be sent to ${clientIds.length} client(s)`;
+        recipientText.textContent = `This email will be sent to  client`;
 
         // Clear and add client IDs to form
         const container = document.getElementById('clientIdsContainer');
