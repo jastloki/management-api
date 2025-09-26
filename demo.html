@@ -1,214 +1,286 @@
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #f4f6f8;
-        font-family: Arial, sans-serif;
-        color: #1e293b;
-    }
-    .container {
+<div
+    style="
         max-width: 650px;
         margin: 20px auto;
         padding: 25px 30px;
         background: #fff;
         border-radius: 8px;
-    }
-    .header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-    .header img {
-        height: 50px;
-        border-radius: 50%;
-    }
-    .brand {
-        font-weight: 700;
-        font-size: 22px;
-        color: #045cb4;
-    }
-    .tag {
-        font-size: 13px;
-        opacity: 0.9;
-        margin-top: 3px;
-    }
-    h1 {
-        font-size: 24px;
-        color: #045cb4;
-        margin: 0 0 18px 0;
-        border-bottom: 2px solid #e6eef8;
-        padding-bottom: 6px;
-    }
-    h2 {
-        font-size: 17px;
+        font-family: Arial, sans-serif;
         color: #1e293b;
-        margin: 20px 0 12px 0;
-        border-bottom: 1px solid #e6eef8;
-        padding-bottom: 4px;
-    }
-    p {
-        font-size: 15px;
-        line-height: 1.5;
-        margin: 0 0 14px 0;
-    }
-    ul {
-        margin: 0 0 18px 20px;
-        font-size: 15px;
-    }
-    ul li {
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .highlight {
-        font-weight: 700;
-        color: #045cb4;
-    }
-    .cta {
-        text-align: center;
-        margin: 25px 0;
-    }
-    .btn {
-        display: inline-block;
-        text-decoration: none;
-        padding: 12px 28px;
-        border-radius: 8px;
-        background: #045cb4;
-        color: #fff;
-        font-weight: 600;
-        font-size: 16px;
-    }
-    .separator {
-        border-top: 1px solid #e6eef8;
-        margin: 25px 0;
-    }
-    .section-box {
-        background: #f9fafd;
-        padding: 15px 18px;
-        border-radius: 6px;
-        margin-bottom: 18px;
-    }
-    .step-icon {
-        display: inline-block;
-        width: 24px;
-        height: 24px;
-        background: #045cb4;
-        color: #fff;
-        font-weight: bold;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 24px;
-        font-size: 14px;
-    }
-    .footer {
-        margin-top: 30px;
-        font-size: 13px;
-        color: #475569;
-        text-align: center;
-    }
-    .footer strong {
-        display: block;
-        margin-bottom: 5px;
-    }
-    @media (max-width: 640px) {
-        .container {
-            padding: 16px;
-        }
-        .header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    }
-</style>
-<div class="container">
+    "
+>
     <!-- Header -->
-    <div class="header">
-        <img src="https://placekitten.com/80/80" alt="Puppies and Cats Logo" />
+    <div
+        style="
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        "
+    >
+        <img
+            src="https://placekitten.com/80/80"
+            alt="Puppies and Cats Logo"
+            style="height: 50px; border-radius: 50%"
+        />
         <div>
-            <div class="brand">Puppies & Cats Club</div>
-            <div class="tag">Heartwarming stories of playful paws</div>
+            <div style="font-weight: 700; font-size: 22px; color: #045cb4">
+                Puppies &amp; Cats Club
+            </div>
+            <div style="font-size: 13px; opacity: 0.9; margin-top: 3px">
+                Heartwarming stories of playful paws
+            </div>
         </div>
     </div>
-
     <!-- Body -->
-    <h1>The Tale of Puppies and Cats</h1>
-
-    <div class="section-box">
-        <p>
+    <h1
+        style="
+            font-size: 24px;
+            color: #045cb4;
+            margin: 0 0 18px 0;
+            border-bottom: 2px solid #e6eef8;
+            padding-bottom: 6px;
+        "
+    >
+        The Tale of Puppies and Cats
+    </h1>
+    <div
+        style="
+            background: #f9fafd;
+            padding: 15px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        "
+    >
+        <p style="font-size: 15px; line-height: 1.5; margin: 0 0 14px 0">
             Once upon a time, a group of curious
-            <span class="highlight">puppies discovered a hidden meadow</span>
+            <span style="font-weight: 700; color: #045cb4"
+                >puppies discovered a hidden meadow</span
+            >
             filled with butterflies and sunshine. They wagged their tails,
             chased each other, and barked happily.
         </p>
-
-        <p>
+        <p style="font-size: 15px; line-height: 1.5; margin: 0 0 14px 0">
             Meanwhile, a family of
-            <span class="highlight">cats lounged gracefully</span> in the warm
-            rays of the sun, watching the puppies with amused eyes. Despite
-            their differences, the puppies and cats slowly began to play
+            <span style="font-weight: 700; color: #045cb4"
+                >cats lounged gracefully</span
+            >
+            in the warm rays of the sun, watching the puppies with amused eyes.
+            Despite their differences, the puppies and cats slowly began to play
             together, forming an unexpected friendship.
         </p>
     </div>
-
-    <h2>The Adventure Steps</h2>
-    <div class="section-box">
-        <ul>
-            <li>
-                <span class="step-icon">1</span
-                ><span class="highlight">Puppies explore</span> the meadow,
-                sniffing every flower.
+    <h2
+        style="
+            font-size: 17px;
+            color: #1e293b;
+            margin: 20px 0 12px 0;
+            border-bottom: 1px solid #e6eef8;
+            padding-bottom: 4px;
+        "
+    >
+        The Adventure Steps
+    </h2>
+    <div
+        style="
+            background: #f9fafd;
+            padding: 15px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        "
+    >
+        <ul style="margin: 0 0 18px 20px; font-size: 15px; padding-left: 20px">
+            <li
+                style="
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                "
+            >
+                <span
+                    style="
+                        display: inline-block;
+                        width: 24px;
+                        height: 24px;
+                        background: #045cb4;
+                        color: #fff;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        text-align: center;
+                        line-height: 24px;
+                        font-size: 14px;
+                    "
+                    >1</span
+                ><span style="font-weight: 700; color: #045cb4"
+                    >Puppies explore</span
+                >
+                the meadow, sniffing every flower.
             </li>
-            <li>
-                <span class="step-icon">2</span>The cats climb trees to observe
-                the playful chaos.
+            <li
+                style="
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                "
+            >
+                <span
+                    style="
+                        display: inline-block;
+                        width: 24px;
+                        height: 24px;
+                        background: #045cb4;
+                        color: #fff;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        text-align: center;
+                        line-height: 24px;
+                        font-size: 14px;
+                    "
+                    >2</span
+                >The cats climb trees to observe the playful chaos.
             </li>
-            <li>
-                <span class="step-icon">3</span>They share snacks of milk and
-                biscuits under the shade.
+            <li
+                style="
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                "
+            >
+                <span
+                    style="
+                        display: inline-block;
+                        width: 24px;
+                        height: 24px;
+                        background: #045cb4;
+                        color: #fff;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        text-align: center;
+                        line-height: 24px;
+                        font-size: 14px;
+                    "
+                    >3</span
+                >They share snacks of milk and biscuits under the shade.
             </li>
-            <li>
-                <span class="step-icon">4</span>Together they nap, dreaming of
-                more adventures.
+            <li
+                style="
+                    margin-bottom: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                "
+            >
+                <span
+                    style="
+                        display: inline-block;
+                        width: 24px;
+                        height: 24px;
+                        background: #045cb4;
+                        color: #fff;
+                        font-weight: bold;
+                        border-radius: 50%;
+                        text-align: center;
+                        line-height: 24px;
+                        font-size: 14px;
+                    "
+                    >4</span
+                >Together they nap, dreaming of more adventures.
             </li>
         </ul>
     </div>
-
-    <h2>Why This Story Matters</h2>
-    <div class="section-box">
-        <p>
+    <h2
+        style="
+            font-size: 17px;
+            color: #1e293b;
+            margin: 20px 0 12px 0;
+            border-bottom: 1px solid #e6eef8;
+            padding-bottom: 4px;
+        "
+    >
+        Why This Story Matters
+    </h2>
+    <div
+        style="
+            background: #f9fafd;
+            padding: 15px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        "
+    >
+        <p style="font-size: 15px; line-height: 1.5; margin: 0 0 14px 0">
             In a world where differences often divide,
-            <span class="highlight">puppies and cats remind us</span>
+            <span style="font-weight: 700; color: #045cb4"
+                >puppies and cats remind us</span
+            >
             that joy, play, and kindness can bring even the unlikeliest friends
             together.
         </p>
     </div>
-
     <!-- CTA -->
-    <div class="cta">
-        <a class="btn" href="#">Read More Furry Tales</a>
+    <div style="text-align: center; margin: 25px 0">
+        <a
+            href="#"
+            style="
+                display: inline-block;
+                text-decoration: none;
+                padding: 12px 28px;
+                border-radius: 8px;
+                background: #045cb4;
+                color: #fff;
+                font-weight: 600;
+                font-size: 16px;
+            "
+            >Read More Furry Tales</a
+        >
     </div>
-
-    <div class="separator"></div>
-
-    <h2>What Happens Next</h2>
-    <div class="section-box">
-        <p>
+    <div style="border-top: 1px solid #e6eef8; margin: 25px 0"></div>
+    <h2
+        style="
+            font-size: 17px;
+            color: #1e293b;
+            margin: 20px 0 12px 0;
+            border-bottom: 1px solid #e6eef8;
+            padding-bottom: 4px;
+        "
+    >
+        What Happens Next
+    </h2>
+    <div
+        style="
+            background: #f9fafd;
+            padding: 15px 18px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        "
+    >
+        <p style="font-size: 15px; line-height: 1.5; margin: 0 0 14px 0">
             The puppies and cats plan their next adventure —
-            <span class="highlight">a journey to the enchanted forest</span>,
-            where mysteries and new friends await.
+            <span style="font-weight: 700; color: #045cb4"
+                >a journey to the enchanted forest</span
+            >, where mysteries and new friends await.
         </p>
-
-        <p>
+        <p style="font-size: 15px; line-height: 1.5; margin: 0 0 14px 0">
             Stay tuned for more delightful chapters from the
-            <span class="highlight">Puppies & Cats Club</span>.
+            <span style="font-weight: 700; color: #045cb4"
+                >Puppies &amp; Cats Club</span
+            >.
         </p>
     </div>
-
     <!-- Footer -->
-    <div class="footer">
-        <strong>Puppies & Cats Club</strong>
-        © 2025 Puppies & Cats. All rights reserved.
+    <div
+        style="
+            margin-top: 30px;
+            font-size: 13px;
+            color: #475569;
+            text-align: center;
+        "
+    >
+        <strong style="display: block; margin-bottom: 5px"
+            >Puppies &amp; Cats Club</strong
+        >
+        © 2025 Puppies &amp; Cats. All rights reserved.
     </div>
 </div>
