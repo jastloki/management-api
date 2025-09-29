@@ -48,11 +48,12 @@ class CheckEmailValidityCommand extends Command
             ->where("email", "!=", "")
             ->count();
 
-        $totalClients = Client::whereNotNull("email")
+        $totalClients = Client::where("is_email_valid", true)
+            ->whereNotNull("email")
             ->where("email", "!=", "")
             ->count();
 
-        $this->info("Total clients with emails: {$totalClients}");
+        $this->info("Total clients with valid emails: {$totalClients}");
         $this->info("Clients with invalid emails: {$totalInvalidClients}");
 
         if ($totalInvalidClients === 0 && !$force) {

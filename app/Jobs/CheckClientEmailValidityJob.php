@@ -56,7 +56,7 @@ class CheckClientEmailValidityJob implements ShouldQueue
      *
      * @var int
      */
-    public $timeout = 300;
+    public $timeout = 600;
 
     /**
      * Create a new job instance.
@@ -65,7 +65,7 @@ class CheckClientEmailValidityJob implements ShouldQueue
      * @param int $chunkSize The number of clients to process per chunk
      * @return void
      */
-    public function __construct(int $page = 1, int $chunkSize = 100)
+    public function __construct(int $page = 1, int $chunkSize = 25)
     {
         $this->page = $page;
         $this->chunkSize = $chunkSize;
