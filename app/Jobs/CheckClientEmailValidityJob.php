@@ -49,7 +49,7 @@ class CheckClientEmailValidityJob implements ShouldQueue
      *
      * @var int
      */
-    public $backoff = 30;
+    public $backoff = 60;
 
     /**
      * The number of seconds the job can run before timing out.
@@ -88,7 +88,8 @@ class CheckClientEmailValidityJob implements ShouldQueue
 
             // Calculate offset for pagination
             $offset = ($this->page - 1) * $this->chunkSize;
-
+            $lastProcessedId =
+                $this->page > 1 ? $this->getLastProcessedId() : 0;
             // Fetch clients with invalid emails in chunks
             $clients = Client::where("is_email_valid", false)
                 ->whereNotNull("email")
@@ -164,12 +165,12 @@ class CheckClientEmailValidityJob implements ShouldQueue
                 "valid_count" => $validCount,
                 "invalid_count" => $invalidCount,
             ]);
-
+            $lastId = $clients->last()?->id ?? $lastProcessedId;
             // Check if there are more clients to process
             $remainingCount = Client::where("is_email_valid", false)
                 ->whereNotNull("email")
                 ->where("email", "!=", "")
-                ->offset($offset + $this->chunkSize)
+                ->where("id", ">", $lastId)
                 ->limit(1)
                 ->count();
 
@@ -223,5 +224,12 @@ class CheckClientEmailValidityJob implements ShouldQueue
     public function tags()
     {
         return ["email-validation", "clients", "page:" . $this->page];
+    }
+
+    protected function getLastProcessedId(): int
+    {
+        // For now, we'll use a simple calculation based on page and chunk size
+        // In a more robust solution, you could cache the last processed ID
+        return ($this->page - 1) * $this->chunkSize;
     }
 }

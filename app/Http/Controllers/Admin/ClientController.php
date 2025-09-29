@@ -349,10 +349,7 @@ class ClientController extends Controller
                     ->route("admin.clients.index", [
                         "converted" => $request->input("converted", "true"),
                     ])
-                    ->with(
-                        "warning",
-                        "No new clients were imported. Please check your file format.",
-                    );
+                    ->with("success", "Import started");
             }
 
             $type =
