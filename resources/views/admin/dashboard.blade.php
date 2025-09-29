@@ -96,7 +96,7 @@
                     <h5 class="card-title mb-0">
                         <i class="bi bi-clock-history me-2 text-primary"></i>Recent Leads
                     </h5>
-                    <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-primary btn-sm">
+                    <a href="{{ route('admin.clients.index', ['converted' => 'false']) }}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-eye me-1"></i>View All
                     </a>
                 </div>
