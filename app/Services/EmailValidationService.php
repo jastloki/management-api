@@ -45,14 +45,14 @@ class EmailValidationService
                 return $result;
             }
 
-            // Check 3: Domain validation
-            $domainCheck = $this->validateDomain($email);
-            $result["checks"]["domain"] = $domainCheck;
+            // // Check 3: Domain validation
+            // $domainCheck = $this->validateDomain($email);
+            // $result["checks"]["domain"] = $domainCheck;
 
-            if (!$domainCheck["valid"]) {
-                $result["reason"] = $domainCheck["reason"];
-                return $result;
-            }
+            // if (!$domainCheck["valid"]) {
+            //     $result["reason"] = $domainCheck["reason"];
+            //     return $result;
+            // }
 
             // Check 4: Disposable email check
             $disposableCheck = $this->checkDisposableEmail($email);
