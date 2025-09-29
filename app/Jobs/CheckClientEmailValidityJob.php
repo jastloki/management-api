@@ -142,13 +142,13 @@ class CheckClientEmailValidityJob implements ShouldQueue
                         $invalidCount++;
                     }
 
-                    Log::debug("Email validation result", [
-                        "client_id" => $client->id,
-                        "email" => $client->email,
-                        "is_valid" => $isValid,
-                        "reason" => $validationResult["reason"],
-                        "checks" => $validationResult["checks"],
-                    ]);
+                    // Log::debug("Email validation result", [
+                    //     "client_id" => $client->id,
+                    //     "email" => $client->email,
+                    //     "is_valid" => $isValid,
+                    //     "reason" => $validationResult["reason"],
+                    //     "checks" => $validationResult["checks"],
+                    // ]);
                 } catch (Exception $e) {
                     Log::warning("Failed to validate email for client", [
                         "client_id" => $client->id,
