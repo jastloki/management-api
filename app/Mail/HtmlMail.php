@@ -58,13 +58,10 @@ class HtmlMail extends Mailable implements ShouldQueue
             "current_date" => now()->format("F j, Y"),
             "current_time" => now()->format("g:i A"),
             "current_year" => now()->year,
-            "company_name" => config("app.company_name", config("app.name")),
+            "company_name" => env("COMPANY_NAME", ""),
             "company_website" => config("app.url"),
-            "support_email" => config(
-                "mail.from.address",
-                "support@example.com",
-            ),
-            "support_phone" => config("app.support_phone", ""),
+            "support_email" => env("MAIL_FROM_ADDRESS", ""),
+            "support_phone" => env("SUPPORT_PHONE", ""),
 
             // Add any additional client-specific data
             "registration_date" => $this->client->created_at->format("F j, Y"),
