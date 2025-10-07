@@ -3,13 +3,7 @@
 @section('title', 'Email Analytics')
 @section('heading', 'Email Analytics')
 
-@section('page-actions')
-<div class="btn-group">
-    <a href="{{ route('admin.emails.index') }}" class="btn btn-primary">
-        <i class="bi bi-arrow-left me-2"></i>Back to Email Queue
-    </a>
-</div>
-@endsection
+
 
 @section('content')
 <!-- Status Distribution Chart -->

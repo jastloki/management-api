@@ -328,11 +328,11 @@
                         @endpermission
 
                         @permission('emails.view')
-                        <li class="nav-item">
+                        <!--<li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.emails.index') ? 'active' : '' }}" href="{{ route('admin.emails.index') }}">
                                 <i class="bi bi-envelope me-2"></i>Email Queue
                             </a>
-                        </li>
+                        </li>-->
                         @endpermission
 
                         @permission('emails.analytics')
