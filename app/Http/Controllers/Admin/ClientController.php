@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\HtmlMail;
 use App\Models\Client;
 use App\Models\Status;
 use App\Models\User;
@@ -601,6 +602,107 @@ class ClientController extends Controller
             return redirect()
                 ->back()
                 ->with("error", "Failed to update clients. Please try again.");
+        }
+    }
+
+    public function sendHtmlEmail(Request $request)
+    {
+        $request->validate([
+            "ids" => "required|array",
+            "template_id" => "required|exists:email_templates,id",
+            "proxy_id" => "nullable|exists:proxies,id",
+        ]);
+
+        try {
+            $template = \App\Models\EmailTemplate::findOrFail(
+                $request->template_id,
+            );
+
+            if (!$template->is_active) {
+                return back()->with(
+                    "error",
+                    "The selected email template is not active.",
+                );
+            }
+
+            // Get proxy if selected
+            $proxy = null;
+            if ($request->proxy_id) {
+                $proxy = \App\Models\Proxy::active()->find($request->proxy_id);
+                if (!$proxy) {
+                    return back()->with(
+                        "error",
+                        "Selected proxy is not available or inactive.",
+                    );
+                }
+            }
+
+            $clientCount = 0;
+
+            $query = Client::with("status", "user", "comments.user")->where(
+                "is_email_valid",
+                "=",
+                true,
+            );
+
+            // Filter by status
+            if ($request->filled("status_id")) {
+                $query = $query->where("status_id", $request->status_id);
+            }
+
+            if ($request->has("converted")) {
+                // Check permission for viewing leads
+                $query = $query->where(
+                    "converted",
+                    $request->converted === "true",
+                );
+            } else {
+                $query = $query->where("converted", true);
+            }
+
+            // Filter by user
+            if ($request->filled("user_id")) {
+                $query = $query->where("user_id", $request->user_id);
+            }
+
+            // Search functionality
+            if ($request->filled("search")) {
+                $search = $request->search;
+                $query = $query->where(function ($q) use ($search) {
+                    $q->where("name", "like", "%{$search}%")
+                        ->orWhere("email", "like", "%{$search}%")
+                        ->orWhere("company", "like", "%{$search}%");
+                });
+            }
+
+            $query->chunk(100, function ($clients) use (
+                $request,
+                $template,
+                $proxy,
+                &$clientCount,
+            ) {
+                foreach ($clients as $client) {
+                    // Create the mail instance
+                    $mail = new HtmlMail($client, $template);
+
+                    // If proxy is selected, store it for use in mail sending
+                    if ($proxy) {
+                        // You can add proxy information to the mail class or handle it in the queue job
+                        $mail->with(["proxy" => $proxy]);
+                    }
+                    $sended = Mail::to($client->email)->send($mail);
+                    $clientCount++;
+                }
+            });
+
+            $proxyMessage = $proxy ? " using proxy: {$proxy->name}" : "";
+            return back()->with("success", "Email queued successfully");
+        } catch (\Exception $e) {
+            dd($e);
+            return back()->withErrors([
+                "email_send_error" =>
+                    "Failed to send email: " . $e->getMessage(),
+            ]);
         }
     }
 }

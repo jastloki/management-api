@@ -266,64 +266,8 @@ Route::name("admin.")->group(function () {
         );
     });
 });
-Route::post("/send-html-email", function (Request $request) {
-    $request->validate([
-        "ids" => "required|array",
-        "template_id" => "required|exists:email_templates,id",
-        "proxy_id" => "nullable|exists:proxies,id",
-    ]);
 
-    try {
-        $template = \App\Models\EmailTemplate::findOrFail(
-            $request->template_id,
-        );
-
-        if (!$template->is_active) {
-            return back()->with(
-                "error",
-                "The selected email template is not active.",
-            );
-        }
-
-        // Get proxy if selected
-        $proxy = null;
-        if ($request->proxy_id) {
-            $proxy = \App\Models\Proxy::active()->find($request->proxy_id);
-            if (!$proxy) {
-                return back()->with(
-                    "error",
-                    "Selected proxy is not available or inactive.",
-                );
-            }
-        }
-
-        $clientCount = 0;
-
-        Client::whereIn("id", $request->ids)->chunk(100, function (
-            $clients,
-        ) use ($request, $template, $proxy, &$clientCount) {
-            foreach ($clients as $client) {
-                // Create the mail instance
-                $mail = new HtmlMail($client, $template);
-
-                // If proxy is selected, store it for use in mail sending
-                if ($proxy) {
-                    // You can add proxy information to the mail class or handle it in the queue job
-                    $mail->with(["proxy" => $proxy]);
-                }
-
-                $sended = Mail::to($client->email)->send($mail);
-
-                $clientCount++;
-            }
-        });
-
-        $proxyMessage = $proxy ? " using proxy: {$proxy->name}" : "";
-        return back()->with("success", "Email queued successfully");
-    } catch (\Exception $e) {
-        dd($e);
-        return back()->withErrors([
-            "email_send_error" => "Failed to send email: " . $e->getMessage(),
-        ]);
-    }
-})->name("send.html.email");
+Route::post("/send-html-email", [
+    ClientController::class,
+    "sendHtmlEmail",
+])->name("send.html.email");
