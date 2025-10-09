@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class HtmlMail extends Mailable implements ShouldQueue
@@ -92,7 +93,10 @@ class HtmlMail extends Mailable implements ShouldQueue
         return new Envelope(
             subject: $this->parsedContent["subject"] ??
                 "Email from " . config("app.name"),
-            from: env("MAIL_FROM_NAME"),
+            from: new Address(
+                config("mail.from.address"),
+                config("mail.from.name"),
+            ),
 
             replyTo: config(
                 "mail.reply_to.address",
