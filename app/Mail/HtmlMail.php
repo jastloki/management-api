@@ -98,10 +98,15 @@ class HtmlMail extends Mailable implements ShouldQueue
                 config("mail.from.name"),
             ),
 
-            replyTo: config(
-                "mail.reply_to.address",
-                config("mail.from.address"),
-            ),
+            replyTo: [
+                new Address(
+                    config(
+                        "mail.reply_to.address",
+                        config("mail.from.address"),
+                    ),
+                    config("mail.reply_to.name", config("mail.from.name")),
+                ),
+            ],
         );
     }
 
