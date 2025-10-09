@@ -651,15 +651,7 @@ class ClientController extends Controller
                 $query = $query->where("status_id", $request->status_id);
             }
 
-            if ($request->has("converted")) {
-                // Check permission for viewing leads
-                $query = $query->where(
-                    "converted",
-                    $request->converted === "true",
-                );
-            } else {
-                $query = $query->where("converted", true);
-            }
+            $query = $query->where("converted", false);
 
             // Filter by user
             if ($request->filled("user_id")) {
