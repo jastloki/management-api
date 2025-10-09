@@ -12,7 +12,6 @@ use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Admin\UserController;
 use App\Mail\HtmlMail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 Route::middleware("guest")->group(function () {
     Route::get("/login", [AuthController::class, "showLogin"])->name("login");
