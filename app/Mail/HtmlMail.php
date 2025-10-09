@@ -92,7 +92,8 @@ class HtmlMail extends Mailable implements ShouldQueue
         return new Envelope(
             subject: $this->parsedContent["subject"] ??
                 "Email from " . config("app.name"),
-            from: config("mail.from.address"),
+            from: env("MAIL_FROM_NAME"),
+
             replyTo: config(
                 "mail.reply_to.address",
                 config("mail.from.address"),
