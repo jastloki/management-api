@@ -319,10 +319,7 @@ Route::post("/send-html-email", function (Request $request) {
         });
 
         $proxyMessage = $proxy ? " using proxy: {$proxy->name}" : "";
-        return back()->with(
-            "success",
-            "Email queued successfully for {$clientCount} recipient(s) using template: {$template->name}{$proxyMessage}",
-        );
+        return back()->with("success", "Email queued successfully");
     } catch (\Exception $e) {
         dd($e);
         return back()->withErrors([
