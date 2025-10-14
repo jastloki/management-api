@@ -83,9 +83,29 @@ class ClientController extends Controller
             $query->where("user_id", "=", auth()->user()->id);
         }
 
+        // Sorting functionality
+        $sortBy = $request->get("sort_by", "created_at");
+        $sortOrder = $request->get("sort_order", "desc");
+
+        // Map frontend column names to database columns
+        $sortableColumns = [
+            "name" => "name",
+            "email" => "email",
+            "status" => "status_id",
+            "user" => "user_id",
+            "created_at" => "created_at",
+            "updated_at" => "updated_at",
+        ];
+
+        // Apply sorting if valid column
+        if (array_key_exists($sortBy, $sortableColumns)) {
+            $query->orderBy($sortableColumns[$sortBy], $sortOrder);
+        } else {
+            // Default sorting
+            $query->orderBy("created_at", "desc");
+        }
+
         $clients = $query
-            ->latest()
-            ->orderBy("updated_at", "desc")
             ->paginate($request->limit ?? 50)
             ->appends($request->query());
 
@@ -656,6 +676,12 @@ class ClientController extends Controller
             // Filter by user
             if ($request->filled("user_id")) {
                 $query = $query->where("user_id", $request->user_id);
+            }
+
+            if ($request->filled("ids")) {
+                if (is_array($request->ids) && count($request->ids) == 1) {
+                    $query = $query->where("ids", $request->ids);
+                }
             }
 
             // Search functionality

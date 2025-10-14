@@ -21,9 +21,9 @@
             </a></li>
         </ul>
     </div>
-    <button type="button" class="btn btn-outline-info" onclick="bulkTest()">
+    <!--<button type="button" class="btn btn-outline-info" onclick="bulkTest()">
         <i class="bi bi-speedometer2 me-2"></i>Bulk Test
-    </button>
+    </button>-->
     <a href="{{ route('admin.proxies.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-lg me-2"></i>Add New Proxy
     </a>
@@ -202,11 +202,11 @@
                                                 <i class="bi bi-eye me-2"></i>View Details
                                             </a>
                                         </li>
-                                        <li>
+                                        <!--<li>
                                             <button class="dropdown-item" onclick="testProxy({{ $proxy->id }})">
                                                 <i class="bi bi-speedometer2 me-2"></i>Test Connection
                                             </button>
-                                        </li>
+                                        </li>-->
                                         <li>
                                             <a class="dropdown-item" href="{{ route('admin.proxies.edit', $proxy) }}">
                                                 <i class="bi bi-pencil me-2"></i>Edit

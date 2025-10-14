@@ -188,14 +188,14 @@
 
     <div class="col-lg-4">
         <!-- Status Card -->
-        <div class="card mb-4">
-            <div class="card-header bg-white border-0">
+        <!--<div class="card mb-4">-->
+            <!--<div class="card-header bg-white border-0">
                 <h5 class="card-title mb-0">
                     <i class="bi bi-activity me-2 text-primary"></i>Connection Status
                 </h5>
             </div>
-            <div class="card-body">
-                <div class="text-center mb-3">
+            <div class="card-body">-->
+                <!--<div class="text-center mb-3">
                     <div class="mb-2">
                         <span class="badge {{ $proxy->getStatusBadgeClass() }} fs-5">
                             {{ ucfirst($proxy->status) }}
@@ -206,9 +206,9 @@
                             Response Time: <strong>{{ $proxy->response_time }}ms</strong>
                         </div>
                     @endif
-                </div>
+                </div>-->
 
-                @if($proxy->last_tested_at)
+                <!--@if($proxy->last_tested_at)
                     <div class="mb-3">
                         <label class="form-label text-muted">Last Tested</label>
                         <div>
@@ -216,20 +216,20 @@
                         </div>
                         <small class="text-muted">{{ $proxy->last_tested_at->diffForHumans() }}</small>
                     </div>
-                @endif
+                @endif-->
 
-                @if($proxy->needsTesting())
+                <!--@if($proxy->needsTesting())
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-triangle me-2"></i>
                         This proxy needs testing
                     </div>
-                @endif
+                @endif-->
 
-                <button type="button" class="btn btn-primary w-100" onclick="testProxy({{ $proxy->id }})">
+                <!--<button type="button" class="btn btn-primary w-100" onclick="testProxy({{ $proxy->id }})">
                     <i class="bi bi-speedometer2 me-2"></i>Test Connection
-                </button>
-            </div>
-        </div>
+                </button>-->
+            <!--</div>-->
+        <!--</div>-->
 
         <!-- Quick Stats -->
         <div class="card mb-4">

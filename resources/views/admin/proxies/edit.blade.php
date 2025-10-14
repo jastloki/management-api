@@ -220,11 +220,11 @@
                     @endif
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
+                        <!--<div>
                             <button type="button" class="btn btn-outline-info" onclick="testProxy({{ $proxy->id }})">
                                 <i class="bi bi-speedometer2 me-2"></i>Test Connection
                             </button>
-                        </div>
+                        </div>-->
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.proxies.index') }}" class="btn btn-outline-secondary">
                                 <i class="bi bi-x-lg me-2"></i>Cancel

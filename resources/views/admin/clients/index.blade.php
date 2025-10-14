@@ -198,12 +198,52 @@
                             <th class="ps-3">
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
-                            <th>Contact Information</th>
-                            <th>Email Validation</th>
-                            <th>Assigned</th>
-                            <th>Status</th>
+                            <th>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort_order' => request('sort_by') == 'name' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                   class="text-decoration-none text-dark d-flex align-items-center">
+                                    Contact Information
+                                    @if(request('sort_by') == 'name')
+                                        <i class="bi bi-chevron-{{ request('sort_order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'email', 'sort_order' => request('sort_by') == 'email' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                   class="text-decoration-none text-dark d-flex align-items-center">
+                                    Email Validation
+                                    @if(request('sort_by') == 'email')
+                                        <i class="bi bi-chevron-{{ request('sort_order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'user', 'sort_order' => request('sort_by') == 'user' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                   class="text-decoration-none text-dark d-flex align-items-center">
+                                    Assigned
+                                    @if(request('sort_by') == 'user')
+                                        <i class="bi bi-chevron-{{ request('sort_order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'status', 'sort_order' => request('sort_by') == 'status' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                   class="text-decoration-none text-dark d-flex align-items-center">
+                                    Status
+                                    @if(request('sort_by') == 'status')
+                                        <i class="bi bi-chevron-{{ request('sort_order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                    @endif
+                                </a>
+                            </th>
                             <th>Comments</th>
-                            <th>Joined</th>
+                            <th>
+                                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'created_at', 'sort_order' => request('sort_by') == 'created_at' && request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                   class="text-decoration-none text-dark d-flex align-items-center">
+                                    Joined
+                                    @if(request('sort_by') == 'created_at' || !request('sort_by'))
+                                        <i class="bi bi-chevron-{{ (request('sort_order') == 'asc' && request('sort_by') == 'created_at') ? 'up' : 'down' }} ms-1"></i>
+                                    @endif
+                                </a>
+                            </th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -428,6 +468,28 @@
 
     .dropdown-item:hover {
         background-color: #f8f9fa;
+    }
+
+    /* Sortable table headers */
+    .table th a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: color 0.2s;
+    }
+
+    .table th a:hover {
+        color: #0d6efd;
+    }
+
+    .table th a i {
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+
+    .table th a:hover i {
+        opacity: 1;
     }
 </style>
 
