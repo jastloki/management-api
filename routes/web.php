@@ -71,6 +71,18 @@ Route::name("admin.")->group(function () {
             "bulkMakeClient",
         ])->name("clients.bulk-make-client");
 
+        // Client Bulk Reset Email Sent Route
+        Route::post("/clients/bulk/bulk-reset-email-sent", [
+            ClientController::class,
+            "bulkResetEmailSent",
+        ])->name("clients.bulk-reset-email-sent");
+
+        // Delete Invalid Clients Route
+        Route::delete("/clients/delete-invalid/cls", [
+            ClientController::class,
+            "deleteInvalidClients",
+        ])->name("clients.delete-invalid");
+
         // Status Management Routes
         Route::resource("statuses", StatusController::class);
 

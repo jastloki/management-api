@@ -626,6 +626,54 @@ class ClientController extends Controller
         }
     }
 
+    public function bulkResetEmailSent(Request $request)
+    {
+        $request->validate([
+            "client_ids" => "required|string",
+        ]);
+
+        try {
+            $clientIds = json_decode($request->client_ids, true);
+
+            if (!is_array($clientIds) || empty($clientIds)) {
+                return back()->with("error", "Invalid client selection.");
+            }
+
+            $updatedCount = Client::whereIn("id", $clientIds)->update([
+                "is_email_sent" => false,
+            ]);
+
+            return back()->with(
+                "success",
+                "Successfully reset email sent status for {$updatedCount} client(s).",
+            );
+        } catch (\Exception $e) {
+            Log::error("Bulk reset email sent error: " . $e->getMessage());
+            return back()->with(
+                "error",
+                "Failed to reset email sent status. Please try again.",
+            );
+        }
+    }
+
+    public function deleteInvalidClients(Request $request)
+    {
+        try {
+            // Delete all clients where is_email_valid is false
+            $deletedCount = Client::where("is_email_valid", false)->delete();
+            return back()->with(
+                "success",
+                "Successfully deleted {$deletedCount} client(s) with invalid emails.",
+            );
+        } catch (\Exception $e) {
+            Log::error("Delete invalid clients error: " . $e->getMessage());
+            return back()->with(
+                "error",
+                "Failed to delete invalid clients. Please try again.",
+            );
+        }
+    }
+
     public function sendHtmlEmail(Request $request)
     {
         $request->validate([
@@ -671,7 +719,9 @@ class ClientController extends Controller
                 $query = $query->where("status_id", $request->status_id);
             }
 
-            $query = $query->where("converted", false);
+            $query = $query
+                ->where("is_email_sent", false)
+                ->where("converted", false);
 
             // Filter by user
             if ($request->filled("user_id")) {
@@ -710,6 +760,11 @@ class ClientController extends Controller
                         $mail->with(["proxy" => $proxy]);
                     }
                     $sended = Mail::to($client->email)->send($mail);
+
+                    // Update is_email_sent to true after sending email
+                    $client->is_email_sent = true;
+                    $client->save();
+
                     $clientCount++;
                 }
             });

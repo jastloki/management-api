@@ -20,9 +20,10 @@
     <button type="button" class="btn btn-warning" onclick="showBulkEmailModal()">
         <i class="bi bi-envelope me-2"></i>Send Email to current list
     </button>
-    <a href="{{ route('admin.clients.template') }}" class="btn btn-outline-secondary">
-        <i class="bi bi-download me-2"></i>Download Template
-    </a>
+    <button type="button" class="btn btn-danger" onclick="deleteAllInvalidClients()">
+        <i class="bi bi-trash me-2"></i>Delete all invalid clients
+    </button>
+
 
 
 </div>
@@ -131,6 +132,7 @@
                             <option value="50" {{ request('limit', '50') == '50' ? 'selected' : '' }}>50</option>
                             <option value="100" {{ request('limit') == '100' ? 'selected' : '' }}>100</option>
                             <option value="500" {{ request('limit') == '500' ? 'selected' : '' }}>500</option>
+                            <option value="100" {{ request('limit') == '100' ? 'selected' : '' }}>1000</option>
                         </select>
                     </div>
 
@@ -171,6 +173,11 @@
                             <li>
                                 <a class="dropdown-item" href="#" onclick="bulkMakeClient()">
                                     <i class="bi bi-person-badge me-2"></i>Make Client
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="bulkResetEmailSent()">
+                                    <i class="bi bi-envelope-arrow-up me-2"></i>Reset Email Sent
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
@@ -701,6 +708,16 @@
     <input type="hidden" name="client_ids" id="bulkMakeClientIds">
 </form>
 
+<form id="bulkResetEmailSentForm" method="POST" action="{{ route('admin.clients.bulk-reset-email-sent') }}" style="display: none;">
+    @csrf
+    <input type="hidden" name="client_ids" id="bulkResetEmailSentIds">
+</form>
+
+<form id="deleteInvalidClientsForm" method="POST" action="{{ route('admin.clients.delete-invalid') }}" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 @endsection
 
 @section('scripts')
@@ -814,6 +831,29 @@
             const form = document.getElementById('bulkMakeClientForm');
             const clientIdsInput = document.getElementById('bulkMakeClientIds');
             clientIdsInput.value = JSON.stringify(getSelectedClientIds());
+            form.submit();
+        }
+    }
+
+    function bulkResetEmailSent() {
+        if (selectedClients.size === 0) {
+            alert('Please select at least one client');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to reset email sent status for ${selectedClients.size} client(s)? This will set their is_email_sent status to false.`)) {
+            // Submit form for bulk reset email sent
+            const form = document.getElementById('bulkResetEmailSentForm');
+            const clientIdsInput = document.getElementById('bulkResetEmailSentIds');
+            clientIdsInput.value = JSON.stringify(getSelectedClientIds());
+            form.submit();
+        }
+    }
+
+    function deleteAllInvalidClients() {
+        if (confirm('Are you sure you want to delete all clients with invalid emails? This action cannot be undone.')) {
+            // Submit form for deleting invalid clients
+            const form = document.getElementById('deleteInvalidClientsForm');
             form.submit();
         }
     }
