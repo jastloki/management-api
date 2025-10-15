@@ -730,7 +730,7 @@ class ClientController extends Controller
 
             if ($request->filled("ids")) {
                 if (is_array($request->ids) && count($request->ids) == 1) {
-                    $query = $query->where("ids", $request->ids);
+                    $query = $query->where("id", $request->ids);
                 }
             }
 
@@ -772,7 +772,6 @@ class ClientController extends Controller
             $proxyMessage = $proxy ? " using proxy: {$proxy->name}" : "";
             return back()->with("success", "Email queued successfully");
         } catch (\Exception $e) {
-            dd($e);
             return back()->withErrors([
                 "email_send_error" =>
                     "Failed to send email: " . $e->getMessage(),
