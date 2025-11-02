@@ -1,0 +1,44 @@
+<!-- TraceYourCoin Template 4: Ready to Recover -->
+<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#f0f7f9;font-family:Arial,Helvetica,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="padding:26px 0;background:#f0f7f9;">
+      <tr>
+        <td align="center">
+          <table width="640" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <tr>
+              <td style="padding:18px 20px;background:#02293a;color:#ffffff;">
+                <a href="https://traceyourcoin.com" style="text-decoration:none;color:#ffffff;font-weight:700;font-size:18px;">TraceYourCoin</a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:22px 26px;">
+                <h1 style="margin:0 0 8px 0;font-size:20px;color:#02293a;">Your cryptocurrency is ready to recover</h1>
+                <p style="margin:0 0 14px 0;font-size:14px;color:#334155;">
+                  Great news, {client_name} — the recovery process for **{balance} {currency}** has been completed on our side and the assets are ready to return to you.
+                </p>
+
+                <p style="margin:0 0 18px 0;font-size:14px;color:#475569;">
+                  To complete the final transfer, please contact support immediately or click the button below to start the recovery flow. You may need to confirm identity and provide a secure receiving wallet address.
+                </p>
+
+                <a href="{recovery_link}" style="display:inline-block;padding:12px 18px;background:#059669;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;">Contact Support / Recover Now</a>
+
+                <p style="margin:14px 0 0 0;font-size:12px;color:#64748b;">
+                  Phone: <strong>{support_phone}</strong> • Email: <a href="mailto:{support_contact}" style="color:#059669;text-decoration:none;">{support_contact}</a>
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:12px 22px;background:#ffffff;color:#93a3ad;font-size:12px;text-align:center;">
+                TraceYourCoin • traceyourcoin.com • Registered in England & Wales, company no. 31290456 • London
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
