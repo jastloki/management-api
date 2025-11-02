@@ -1,0 +1,52 @@
+<!-- TraceYourCoin Template 1: Case Submitted / Being Processed -->
+<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background-color:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#f4f6f8;padding:28px 0;">
+      <tr>
+        <td align="center">
+          <table width="640" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(8,24,48,0.06);">
+            <tr>
+              <td style="padding:18px 20px;background:#04293a;">
+                <a href="https://traceyourcoin.com" style="text-decoration:none;color:#ffffff;font-weight:700;font-size:18px;">TraceYourCoin</a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:22px 26px;text-align:left;">
+                <h1 style="margin:0 0 10px 0;font-size:20px;color:#02293a;">We’ve received your case</h1>
+                <p style="margin:0 0 14px 0;font-size:14px;color:#385166;">
+                  Hi {client_name},<br><br>
+                  Thanks for submitting your details. Your case (ID: <strong>{case_id}</strong>) is now in our system and being processed by the TraceYourCoin team.
+                </p>
+
+                <div style="display:inline-block;padding:12px 14px;background:#eef6f7;border-radius:8px;font-size:13px;color:#0f3b3b;margin-bottom:16px;">
+                  Submitted: <strong>{date}</strong><br/>
+                  Status: <strong>Processing</strong>
+                </div>
+
+                <p style="margin:0 0 18px 0;font-size:13px;color:#475569;">
+                  No action is required from you at this time. If you have extra documents (TX IDs, wallet addresses, screenshots), reply to this email or upload them via your dashboard.
+                </p>
+
+                <a href="{support_link}" style="display:inline-block;padding:10px 16px;background:#06b6d4;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px;">View your case</a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:14px 20px;background:#f8fafc;color:#64748b;font-size:12px;">
+                Need help? Contact <a href="mailto:{support_contact}" style="color:#06b6d4;text-decoration:none;">{support_contact}</a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:12px 20px;background:#ffffff;color:#93a3ad;font-size:12px;text-align:center;">
+                TraceYourCoin • traceyourcoin.com • Registered in England & Wales, company no. 09876543 • London
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
